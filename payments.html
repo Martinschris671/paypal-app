@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payments - PayPal</title>
+    <style>
+      /* --- FONT DEFINITIONS (assuming they are in a /fonts folder) --- */
+      @font-face {
+        font-family: "PayPal-Sans-Black";
+        src: url("fonts/pay_pal_pro_black.otf") format("opentype");
+        font-weight: 900;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "PayPal-Open-Regular";
+        src: url("fonts/pay_pal_open_regular.otf") format("opentype");
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      /* --- GLOBAL STYLES --- */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "PayPal-Open-Regular", -apple-system, sans-serif;
+        background-color: #eff2f9;
+        color: #000000;
+      }
+
+      #mobile-container {
+        max-width: 448px;
+        margin: 0 auto;
+        background-color: #eff2f9;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 90px; /* Space for fixed footer */
+      }
+
+      main {
+        padding: 0 24px;
+        flex-grow: 1;
+      }
+
+      /* --- HEADER & TABS --- */
+      .payments-header {
+        padding: 16px 24px 0;
+      }
+
+      .payments-header .title {
+        font-family: "PayPal-Sans-Black", sans-serif;
+        font-size: 2.2rem;
+        font-weight: 900;
+        margin-bottom: 24px;
+      }
+
+      .payments-tabs {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+
+      .tab-item {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #545d68;
+        padding-bottom: 8px;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .tab-item.active {
+        color: #000000;
+      }
+
+      .tab-item.active::after {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: #000000;
+      }
+
+      /* --- TAB CONTENT --- */
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      /* "Send" Tab Styles */
+      #send-content .sub-heading {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 12px;
+      }
+
+      .search-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background-color: #ffffff;
+        border: 1px solid #dcdcdc;
+        border-radius: 30px;
+        padding: 12px 16px;
+        margin-bottom: 32px;
+      }
+      .search-container svg {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+      }
+      .search-container input {
+        border: none;
+        outline: none;
+        font-family: "PayPal-Open-Regular", sans-serif;
+        font-size: 1rem;
+        width: 100%;
+        background: transparent;
+      }
+      .search-container input::placeholder {
+        color: #757575;
+      }
+      /* This is the new rule for the card */
+      .get-started-card {
+        background-color: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 28px 24px; /* Padding for inside the card */
+      }
+
+      /* This rule is updated to remove padding */
+      .get-started-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        /* Padding is now on the parent card */
+      }
+
+      .get-started-block svg {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 16px;
+      }
+      .get-started-block .description {
+        font-size: 1rem;
+        color: #000000;
+        margin-bottom: 24px;
+      }
+      .get-started-btn {
+        background-color: #000000;
+        color: #ffffff;
+        border: none;
+        font-family: "PayPal-Open-Regular", sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 14px 40px;
+        border-radius: 30px;
+        cursor: pointer;
+      }
+
+      /* "Bills" Tab Styles */
+      #bills-content .info-text {
+        font-size: 1rem;
+        color: #000000;
+        line-height: 1.5;
+        padding-top: 16px;
+      }
+
+      /* --- FOOTER NAVIGATION --- */
+      footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-width: 448px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      .bottom-nav {
+        display: flex;
+        justify-content: space-around;
+        padding: 12px 0;
+        padding-bottom: 16px;
+      }
+
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+      }
+      .nav-item svg {
+        width: 24px;
+        height: 24px;
+      }
+      .nav-item span {
+        font-size: 0.75rem;
+      }
+
+      .nav-item.active svg path,
+      .nav-item.active span {
+        fill: #000000;
+        color: #000000;
+        font-weight: 700;
+      }
+      .nav-item.inactive svg path,
+      .nav-item.inactive span {
+        fill: #545d68;
+        color: #545d68;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mobile-container">
+      <header class="payments-header">
+        <h1 class="title">Payments</h1>
+        <nav class="payments-tabs">
+          <div class="tab-item active" data-tab="send-content">Send</div>
+          <div class="tab-item" data-tab="bills-content">Bills</div>
+        </nav>
+      </header>
+
+      <main>
+        <!-- Send Tab Content -->
+        <div id="send-content" class="tab-content active">
+          <h2 class="sub-heading">Send to someone new</h2>
+          <div class="search-container">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                fill="#545d68"
+                d="M21.53 20.47l-4.7-4.7a8.26 8.26 0 1 0-1.05 1.07l4.69 4.7a0.75 0.75 0 0 0 1.06-1.07zM3.75 10.5a6.75 6.75 0 1 1 6.75 6.75a6.76 6.76 0 0 1-6.75-6.75z"
+              />
+            </svg>
+            <input type="text" placeholder="Name, username, email address" />
+          </div>
+          <!-- This is the new card wrapper -->
+          <div class="get-started-card">
+            <div class="get-started-block">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+                <path
+                  fill="#5bbbfc"
+                  d="M12 24a4 4 0 0 1 4-4h56a4 4 0 0 1 4 4v32a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4V24z"
+                />
+                <path
+                  fill="#6fc400"
+                  d="M20 40a4 4 0 0 1 4-4h56a4 4 0 0 1 4 4v32a4 4 0 0 1-4 4H24a4 4 0 0 1-4-4V40z"
+                />
+                <path
+                  fill="#faf8f5"
+                  d="M76 36v20a4 4 0 0 1-4 4H20V40a4 4 0 0 1 4-4h52z"
+                />
+                <path
+                  fill="#001c64"
+                  d="M57.99 49.99H33a1 1 0 0 1-1-1v-1.5a1 1 0 0 1 1-1h24.85l-3.3-3.3a1 1 0 0 1 0-1.42l1.05-1.06a1 1 0 0 1 1.42 0l6.89 6.89a1 1 0 0 1 0 1.42l-6.9 6.89a1 1 0 0 1-1.4 0l-1.07-1.06a1 1 0 0 1 0-1.42L58 50z"
+                />
+              </svg>
+              <p class="description">Find people to start sending money</p>
+              <button class="get-started-btn">Get Started</button>
+            </div>
+          </div>
+        </div>
+        <!-- Bills Tab Content -->
+        <div id="bills-content" class="tab-content">
+          <p class="info-text">
+            This is where you’ll see bills you can pay with PayPal like
+            subscriptions and payment requests.
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <nav class="bottom-nav">
+        <a href="home.html">
+          <div class="nav-item inactive">
+            <!-- ui_home.svg -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                d="M22.5 19.5H21v-6.75l0.22 0.22a0.75 0.75 0 0 0 1.06-1.06l-9.22-9.22a1.5 1.5 0 0 0-2.12 0l-9.22 9.22a0.75 0.75 0 1 0 1.06 1.06L3 12.75v6.75H1.5a0.75 0.75 0 0 0 0 1.5h21a0.75 0.75 0 1 0 0-1.5zm-18-8.25l7.5-7.5l7.5 7.5v8.25H15v-5.25a0.75 0.75 0 0 0-0.75-0.75h-4.5A0.75 0.75 0 0 0 9 14.25v5.25H4.5v-8.25zm9 8.25h-3V15h3v4.5z"
+              />
+            </svg>
+            <span>Home</span>
+          </div></a
+        >
+        <div class="nav-item active">
+          <!-- ui_currency_dollar.svg -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M14.25 11.25h-1.5v-6h0.75a3 3 0 0 1 3 3a0.75 0.75 0 1 0 1.5 0a4.5 4.5 0 0 0-4.5-4.5h-0.75v-1.5a0.75 0.75 0 1 0-1.5 0v1.5H10.5a4.5 4.5 0 0 0 0 9h0.75v6h-1.5a3 3 0 0 1-3-3a0.75 0.75 0 1 0-1.5 0a4.5 4.5 0 0 0 4.5 4.5h1.5v1.5a0.75 0.75 0 1 0 1.5 0v-1.5h1.5a4.5 4.5 0 1 0 0-9zm-3.75 0a3 3 0 0 1 0-6h0.75v6H10.5zm3.75 7.5h-1.5v-6h1.5a3 3 0 0 1 0 6z"
+            />
+          </svg>
+          <span>Payments</span>
+        </div>
+        <a href="wallet.html">
+          <div class="nav-item inactive">
+            <!-- ui_wallet.svg -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                d="M20.25 6h-15a0.75 0.75 0 0 1 0-1.5H18A0.75 0.75 0 1 0 18 3H5.25A2.25 2.25 0 0 0 3 5.25v12a2.25 2.25 0 0 0 2.25 2.25h15a1.5 1.5 0 0 0 1.5-1.5V7.5a1.5 1.5 0 0 0-1.5-1.5zm0 12h-15a0.75 0.75 0 0 1-0.75-0.75V7.37C4.74 7.46 5 7.5 5.25 7.5h15V18zm-4.5-5.63a1.13 1.13 0 1 1 2.25 0a1.13 1.13 0 0 1-2.25 0z"
+              />
+            </svg>
+            <span>Wallet</span>
+          </div></a
+        >
+      </nav>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const tabs = document.querySelectorAll(".tab-item");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", () => {
+            // Remove active class from all tabs
+            tabs.forEach((item) => item.classList.remove("active"));
+            // Hide all tab contents
+            tabContents.forEach((content) =>
+              content.classList.remove("active")
+            );
+
+            // Add active class to the clicked tab
+            tab.classList.add("active");
+            // Show the corresponding content
+            const contentId = tab.getAttribute("data-tab");
+            document.getElementById(contentId).classList.add("active");
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

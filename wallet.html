@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wallet - PayPal</title>
+    <style>
+      /* --- FONT DEFINITIONS (assuming they are in a /fonts folder) --- */
+      @font-face {
+        font-family: "PayPal-Sans-Black";
+        src: url("fonts/pay_pal_pro_black.otf") format("opentype");
+        font-weight: 900;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "PayPal-Open-Regular";
+        src: url("fonts/pay_pal_open_regular.otf") format("opentype");
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      /* --- GLOBAL STYLES --- */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "PayPal-Open-Regular", -apple-system, sans-serif;
+        background-color: #f6f7f9;
+        color: #000000;
+      }
+
+      #mobile-container {
+        max-width: 448px;
+        margin: 0 auto;
+        background-color: #f6f7f9;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 90px;
+      }
+
+      main {
+        padding: 0 24px;
+        flex-grow: 1;
+      }
+
+      /* --- TABS --- */
+      .wallet-tabs {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 24px;
+        padding: 16px 24px 0;
+      }
+
+      .tab-item {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #545d68;
+        padding: 4px 0 12px;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        position: relative;
+        margin-top: 30px;
+        font-family: "PayPal-Sans-Black", sans-serif;
+      }
+
+      .tab-item.active {
+        color: #000000;
+      }
+      .tab-item.active::after {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: #000000;
+      }
+
+      /* --- TAB CONTENT --- */
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
+
+      /* --- SHARED STYLES (Section Titles, etc.) --- */
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 32px 0 16px;
+      }
+      .section-title {
+        font-family: "PayPal-Open-Regular", sans-serif;
+        font-size: 1.1rem;
+        font-weight: 900;
+      }
+      .add-new-link {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #000;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .add-new-link svg {
+        width: 24px;
+        height: 24px;
+      }
+      .add-new-link svg path {
+        fill: #000;
+      }
+
+      .content-card {
+        background-color: #ffffff;
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      /* --- "WALLET" TAB STYLES --- UPDATED SECTION --- */
+      .balance-card-wallet {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        padding-top: 50px;
+        padding-bottom: 50px;
+        border: 1px solid #f5f4ee;
+      }
+      .balance-card-wallet .top-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+        transform: translateY(-36px);
+        font-weight: bold;
+      }
+      .balance-card-wallet .balance-label {
+        display: flex;
+        align-items: center;
+        gap: 12px; /* Increased gap for larger logo */
+      }
+      .balance-card-wallet .balance-label svg {
+        /* Made the logo bigger and removed its background */
+        width: 30px;
+        height: 30px;
+      }
+      .balance-card-wallet .balance-amount-large {
+        font-family: "PayPal-Sans-Black", sans-serif;
+        font-size: 2.5rem;
+        font-weight: 900;
+        top: 50%;
+        transform: translatey(-50%);
+      }
+
+      .add-card-block {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .add-card-block .text-content {
+        flex-grow: 1;
+      }
+      .add-card-block .title {
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .add-card-block .subtitle {
+        font-size: 0.9rem;
+        color: #545d68;
+        line-height: 1.4;
+      }
+      .add-card-block .card-icon {
+        flex-shrink: 0;
+      }
+      .add-card-block .card-icon svg {
+        width: 72px;
+        height: 72px;
+      }
+
+      .preference-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .preference-item svg {
+        width: 28px;
+        height: 28px;
+      }
+      .preference-item span {
+        font-weight: 600;
+      }
+      /* --- END OF UPDATED SECTION --- */
+
+      /* --- "ACTIVITY" TAB STYLES --- */
+      .empty-state-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 80px 0;
+      }
+      .empty-state-block svg {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 24px;
+      }
+      .empty-state-block .title {
+        font-family: "PayPal-Sans-Black", sans-serif;
+        font-size: 1.8rem;
+        font-weight: 900;
+        line-height: 1.2;
+        margin-bottom: 12px;
+      }
+      .empty-state-block .subtitle {
+        font-size: 1rem;
+        color: #545d68;
+        line-height: 1.5;
+        max-width: 300px;
+      }
+
+      /* --- FOOTER NAVIGATION --- */
+      footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-width: 448px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-top: 1px solid #e0e0e0;
+      }
+      .bottom-nav {
+        display: flex;
+        justify-content: space-around;
+        padding: 12px 0 16px;
+      }
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+      }
+      .nav-item svg {
+        width: 24px;
+        height: 24px;
+      }
+      .nav-item span {
+        font-size: 0.75rem;
+      }
+      .nav-item.active svg path,
+      .nav-item.active span {
+        fill: #000000;
+        color: #000000;
+        font-weight: 700;
+      }
+      .nav-item.inactive svg path,
+      .nav-item.inactive span {
+        fill: #545d68;
+        color: #545d68;
+      }
+      .balance-card-wallet .balance-label img {
+        width: 30px;
+        height: 30px;
+        object-fit: contain; /* Ensures the image scales nicely */
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mobile-container">
+      <nav class="wallet-tabs">
+        <div class="tab-item active" data-tab="wallet-content">Wallet</div>
+        <div class="tab-item" data-tab="activity-content">Activity</div>
+      </nav>
+
+      <main>
+        <!-- Wallet Tab Content -->
+        <div id="wallet-content" class="tab-content active">
+          <section class="content-card balance-card-wallet">
+            <div class="top-row">
+              <div class="balance-label">
+                <!-- THIS IS THE NEW IMG TAG - Replace the SVG -->
+                <img src="icons/dd_paypal.png" alt="PayPal Logo" />
+                <span>PayPal balance</span>
+              </div>
+              <span class="balance-amount-small">US$0.00</span>
+            </div>
+            <div class="balance-amount-large">US$0.00</div>
+          </section>
+
+          <section>
+            <div class="section-header">
+              <h2 class="section-title">Cards</h2>
+              <a href="#" class="add-new-link">
+                <span>Add new</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path
+                    d="M9.1464,6.3536C8.9512,6.1583 8.9512,5.8417 9.1464,5.6464C9.3417,5.4512 9.6583,5.4512 9.8536,5.6464L15.8536,11.6464C16.0488,11.8417 16.0488,12.1583 15.8536,12.3536L9.8536,18.3536C9.6583,18.5488 9.3417,18.5488 9.1464,18.3536C8.9512,18.1583 8.9512,17.8417 9.1464,17.6464L14.7929,12L9.1464,6.3536Z"
+                  />
+                </svg>
+              </a>
+            </div>
+            <div class="content-card add-card-block">
+              <div class="text-content">
+                <div class="title">Add credit cards</div>
+                <div class="subtitle">
+                  Pay easily without sharing card details with stores,
+                  merchants, and sellers.
+                </div>
+              </div>
+              <div class="card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+                  <path
+                    fill="#d8a6ff"
+                    d="M32 40a4 4 0 0 1 4-4h52a4 4 0 0 1 4 4v32a4 4 0 0 1-4 4H36a4 4 0 0 1-4-4V40z"
+                  />
+                  <path
+                    fill="#5bbbfc"
+                    d="M4 24a4 4 0 0 1 4-4h52a4 4 0 0 1 4 4v32a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V24z"
+                  />
+                  <path
+                    fill="#faf8f5"
+                    d="M64 36v20a4 4 0 0 1-4 4H32V40a4 4 0 0 1 4-4h28z"
+                  />
+                  <path
+                    fill="#001c64"
+                    d="M13 28a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V29a1 1 0 0 0-1-1H13zm51 16H32v8h32v-8z"
+                  />
+                  <path
+                    fill="#7252cc"
+                    d="M92 44H64v8h28v-8zM55 69.5a1 1 0 0 0 1-1V67a1 1 0 0 0-1-1H37a1 1 0 0 0-1 1v1.5a1 1 0 0 0 1 1h18z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <div class="section-header">
+              <h2 class="section-title">Preferences</h2>
+            </div>
+            <div class="content-card preference-item">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path
+                  fill="#000000"
+                  d="M16.5 1.5h-9a2.25 2.25 0 0 0-2.25 2.25v16.5A2.25 2.25 0 0 0 7.5 22.5h3.48a0.75 0.75 0 1 0 0-1.5H7.5a0.75 0.75 0 0 1-0.75-0.75V3.75A0.75 0.75 0 0 1 7.5 3h9a0.75 0.75 0 0 1 0.75 0.75v2.33a0.75 0.75 0 0 0 1.5 0V3.75A2.25 2.25 0 0 0 16.5 1.5z"
+                />
+                <path
+                  fill="#000000"
+                  d="M13.13 5.63a1.13 1.13 0 1 1-2.26 0a1.13 1.13 0 0 1 2.26 0z"
+                />
+                <path
+                  fill="#000000"
+                  d="M20.63 12.02h0.75a0.75 0.75 0 0 1 0.75 0.75v6.75a0.75 0.75 0 0 1-0.75 0.75h-6.75a0.75 0.75 0 0 1-0.76-0.75v-6.75a0.75 0.75 0 0 1 0.76-0.75h0.74v-0.37a2.63 2.63 0 0 1 5.26 0v0.37zm-3.42-1.17c-0.22 0.21-0.34 0.5-0.34 0.8v0.37h2.25v-0.37a1.13 1.13 0 0 0-1.92-0.8zm-1.84 2.67v5.25h5.25v-5.25h-5.25z"
+                  fill-rule="evenodd"
+                />
+              </svg>
+              <span>Online purchases</span>
+            </div>
+          </section>
+        </div>
+
+        <!-- Activity Tab Content -->
+        <div id="activity-content" class="tab-content">
+          <div class="empty-state-block">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                fill="#000000"
+                d="M6.75 9.75A0.75 0.75 0 0 1 7.5 9h9a0.75 0.75 0 1 1 0 1.5h-9a0.75 0.75 0 0 1-0.75-0.75zM7.5 13.5h9a0.75 0.75 0 1 0 0-1.5h-9a0.75 0.75 0 1 0 0 1.5zm14.25-8.25V19.5a0.75 0.75 0 0 1-1.09 0.67L18 18.84l-2.66 1.33a0.75 0.75 0 0 1-0.68 0L12 18.84l-2.66 1.33a0.75 0.75 0 0 1-0.68 0L6 18.84l-2.66 1.33a0.75 0.75 0 0 1-1.09-0.67V5.25a1.5 1.5 0 0 1 1.5-1.5h16.5a1.5 1.5 0 0 1 1.5 1.5zm-1.5 0H3.75v13.04l1.91-0.96a0.75 0.75 0 0 1 0.68 0L9 18.66l2.66-1.33a0.75 0.75 0 0 1 0.68 0L15 18.66l2.66-1.33a0.75 0.75 0 0 1 0.68 0l1.91 0.96V5.25z"
+              />
+            </svg>
+            <h2 class="title">All your payments and purchases in one place</h2>
+            <p class="subtitle">
+              Keep track of everything you do with PayPal right here. Let's get
+              started.
+            </p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <nav class="bottom-nav">
+        <a href="home.html">
+          <div class="nav-item inactive">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                d="M22.5 19.5H21v-6.75l0.22 0.22a0.75 0.75 0 0 0 1.06-1.06l-9.22-9.22a1.5 1.5 0 0 0-2.12 0l-9.22 9.22a0.75 0.75 0 1 0 1.06 1.06L3 12.75v6.75H1.5a0.75 0.75 0 0 0 0 1.5h21a0.75 0.75 0 1 0 0-1.5zm-18-8.25l7.5-7.5l7.5 7.5v8.25H15v-5.25a0.75 0.75 0 0 0-0.75-0.75h-4.5A0.75 0.75 0 0 0 9 14.25v5.25H4.5v-8.25zm9 8.25h-3V15h3v4.5z"
+              /></svg
+            ><span>Home</span>
+          </div></a
+        >
+        <a href="payments.html">
+          <div class="nav-item inactive">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                d="M14.25 11.25h-1.5v-6h0.75a3 3 0 0 1 3 3a0.75 0.75 0 1 0 1.5 0a4.5 4.5 0 0 0-4.5-4.5h-0.75v-1.5a0.75 0.75 0 1 0-1.5 0v1.5H10.5a4.5 4.5 0 0 0 0 9h0.75v6h-1.5a3 3 0 0 1-3-3a0.75 0.75 0 1 0-1.5 0a4.5 4.5 0 0 0 4.5 4.5h1.5v1.5a0.75 0.75 0 1 0 1.5 0v-1.5h1.5a4.5 4.5 0 1 0 0-9zm-3.75 0a3 3 0 0 1 0-6h0.75v6H10.5zm3.75 7.5h-1.5v-6h1.5a3 3 0 0 1 0 6z"
+              /></svg
+            ><span>Payments</span>
+          </div></a
+        >
+        <div class="nav-item active">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M20.25 6h-15a0.75 0.75 0 0 1 0-1.5H18A0.75 0.75 0 1 0 18 3H5.25A2.25 2.25 0 0 0 3 5.25v12a2.25 2.25 0 0 0 2.25 2.25h15a1.5 1.5 0 0 0 1.5-1.5V7.5a1.5 1.5 0 0 0-1.5-1.5zm0 12h-15a0.75 0.75 0 0 1-0.75-0.75V7.37C4.74 7.46 5 7.5 5.25 7.5h15V18zm-4.5-5.63a1.13 1.13 0 1 1 2.25 0a1.13 1.13 0 0 1-2.25 0z"
+            /></svg
+          ><span>Wallet</span>
+        </div>
+      </nav>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const tabs = document.querySelectorAll(".tab-item");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", () => {
+            tabs.forEach((item) => item.classList.remove("active"));
+            tabContents.forEach((content) =>
+              content.classList.remove("active")
+            );
+
+            tab.classList.add("active");
+            const contentId = tab.getAttribute("data-tab");
+            document.getElementById(contentId).classList.add("active");
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

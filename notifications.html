@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notifications</title>
+    <style>
+      /* --- FONT DEFINITIONS --- */
+      @font-face {
+        font-family: "PayPal-Open-Regular";
+        src: url("fonts/pay_pal_open_regular.otf") format("opentype");
+        font-weight: normal;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "PayPal-Sans"; /* For buttons */
+        src: url("fonts/PayPalProSWeb-Book.woff2") format("woff2");
+        font-weight: normal;
+        font-style: normal;
+      }
+      /* --- GLOBAL STYLES & VARIABLES --- */
+      :root {
+        --background-color: #ffffff;
+        --text-primary: #000000;
+        --text-secondary: #545d68;
+        --container-bg: #f5f5f5;
+        --border-color: #e0e0e0;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "PayPal-Open-Regular", -apple-system, sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-primary);
+        overflow: hidden;
+      }
+
+      #mobile-container {
+        max-width: 448px;
+        margin: 0 auto;
+        background-color: var(--background-color);
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* --- HEADER --- */
+      .notifications-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        height: 56px;
+        flex-shrink: 0;
+      }
+
+      .header-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+      }
+      .header-button svg {
+        width: 24px;
+        height: 24px;
+        display: block;
+      }
+      .header-button svg path {
+        fill: var(--text-primary);
+      }
+      .header-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      /* --- MAIN CONTENT --- */
+      main {
+        padding: 0 16px;
+        overflow-y: auto;
+        flex-grow: 1;
+      }
+      .filter-chip {
+        display: inline-block;
+        background-color: var(--text-primary);
+        color: var(--background-color);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin: 8px 0 24px;
+      }
+      .notifications-list {
+        position: relative;
+      }
+
+      /* --- NOTIFICATION ITEM & SWIPE --- */
+      .notification-swipe-wrapper {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 24px;
+      }
+      .notification-delete-bg {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-color: #d70000;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 24px;
+      }
+      .notification-delete-bg svg {
+        width: 24px;
+        height: 24px;
+      }
+      .notification-delete-bg svg path {
+        fill: #ffffff;
+      }
+      .notification-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        background-color: var(--background-color);
+        position: relative;
+        transition: transform 0.3s ease, opacity 0.5s ease;
+        will-change: transform;
+        cursor: pointer;
+      }
+      .notification-item.deleting {
+        transition: transform 0.3s ease, opacity 0.3s ease, height 0.3s ease,
+          margin 0.3s ease;
+        transform: scale(0.95);
+        opacity: 0;
+        height: 0 !important;
+        margin-bottom: 0 !important;
+      }
+      .notification-item.faded .notification-content,
+      .notification-item.faded .notification-icon {
+        opacity: 0.5;
+      }
+
+      /* UPDATED ICON STYLE */
+      .notification-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background-color: var(--background-color);
+        border: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: opacity 0.5s ease;
+        overflow: hidden; /* Add this line to crop the oversized SVG */
+      }
+
+      .notification-icon svg {
+        /* Make the SVG larger than its 48px container to fill the space */
+        width: 43px;
+        height: 43px;
+        transform: translateY(0.8px);
+      }
+
+      .notification-content {
+        padding-top: 4px;
+        transition: opacity 0.5s ease;
+      }
+      .notification-content .title {
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 4px;
+      }
+      .notification-content .subtitle {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        line-height: 1.4;
+      }
+
+      /* --- "ALL DONE" STATE --- */
+      .all-done-container {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 80px 20px;
+        height: 100%;
+      }
+      .all-done-container.visible {
+        display: flex;
+      }
+      .all-done-container svg {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 24px;
+      }
+      .all-done-container .title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        font-family: "PayPal-Sans", sans-serif;
+      }
+      .all-done-container .subtitle {
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      /* --- MODAL --- */
+      .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        z-index: 998;
+      }
+      .modal-backdrop.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-sheet {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-width: 448px;
+        margin: 0 auto;
+        background-color: var(--background-color);
+        border-radius: 16px 16px 0 0;
+        padding: 16px;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+        z-index: 999;
+      }
+      .modal-sheet.visible {
+        transform: translateY(0);
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+      .modal-header .title {
+        font-weight: 600;
+      }
+      .modal-option {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 12px 0;
+        cursor: pointer;
+      }
+      .modal-option svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      /* --- UPDATED TOAST STYLE --- */
+      .toast {
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        right: 16px;
+        transform: translateY(-150%);
+        background-color: var(--text-primary);
+        color: var(--background-color);
+        padding: 14px 16px;
+        border-radius: 10px; /* Updated border-radius */
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.9rem;
+        z-index: 1000;
+        opacity: 0;
+        transition: transform 0.4s ease, opacity 0.4s ease;
+        max-width: calc(448px - 32px); /* Constrain width on larger screens */
+        margin: 0 auto;
+      }
+      .toast.visible {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .toast svg {
+        width: 20px;
+        height: 20px;
+      }
+      .toast svg path {
+        fill: var(--background-color);
+      }
+
+      /* --- UPDATED LOADING SPINNER --- */
+      .loading-overlay {
+        position: fixed; /* Keep this as fixed for full-page centering */
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1001;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .loading-overlay.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .spinner {
+        /* New spinner style, made a little bigger */
+        width: 50px;
+        height: 50px;
+        border: 2px solid #000000; /* Thin black border */
+        border-top-color: transparent; /* Creates the gap in the circle */
+        border-radius: 50%; /* Makes it a circle */
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mobile-container">
+      <!-- Header -->
+      <header class="notifications-header">
+        <button
+          class="header-button"
+          id="back-btn"
+          onclick="window.history.back()"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+            <path
+              d="M8.5285,1.4998L7.825,0.7891L1.8066,6.717C1.3749,7.1444 1.3713,7.8408 1.7987,8.2726L7.825,14.4998L8.5356,13.7962L2.9262,7.9998H15.0019V6.9998H2.9446L8.5285,1.4998Z"
+            />
+          </svg>
+        </button>
+        <span class="header-title">Notifications</span>
+        <button class="header-button" id="options-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M13.5 6.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0zm0 5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0zm0 5.01a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0z"
+            />
+          </svg>
+        </button>
+      </header>
+
+      <!-- Main Content -->
+      <main>
+        <div class="filter-chip">All</div>
+        <div class="notifications-list" id="notifications-list"></div>
+
+        <div class="all-done-container" id="all-done">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              fill="#545d68"
+              d="M10.45 4.93a1.48 1.48 0 0 0-2.43 0.55L3.09 19A1.48 1.48 0 0 0 4.48 21c0.17 0 0.35-0.03 0.5-0.1l13.54-4.92a1.48 1.48 0 0 0 0.55-2.43l-8.62-8.62zM9.67 17.61L6.4 14.33l1.23-3.4l5.45 5.45l-3.4 1.23zm-5.15 1.88l1.3-3.6l2.3 2.29l-3.6 1.3zm10.1-3.68L8.2 9.37l1.22-3.36l8.57 8.57l-3.36 1.23zM15 6.75a3.54 3.54 0 0 1 0.36-1.46c0.5-1 1.43-1.54 2.64-1.54c0.63 0 1.03-0.21 1.28-0.68c0.13-0.25 0.2-0.54 0.22-0.83A0.75 0.75 0 0 1 21 2.25c0 1.2-0.8 3-3 3c-0.63 0-1.03 0.21-1.28 0.68c-0.13 0.25-0.2-0.54-0.22 0.83A0.75 0.75 0 1 1 15 6.75zm-2.25-3V1.5a0.75 0.75 0 1 1 1.5 0v2.25a0.75 0.75 0 1 1-1.5 0zm9.53 7.72a0.75 0.75 0 0 1-0.24 1.22a0.75 0.75 0 0 1-0.82-0.16l-1.5-1.5a0.75 0.75 0 0 1 1.06-1.06l1.5 1.5zm0.46-4L20.49 8.2A0.75 0.75 0 1 1 20 6.8l2.25-0.75a0.75 0.75 0 1 1 0.48 1.42z"
+            />
+          </svg>
+          <h2 class="title">All done for now</h2>
+          <p class="subtitle">
+            Check back later for handy tips to keep your account in top shape.
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <!-- Page-level overlays -->
+    <div class="loading-overlay" id="loading-overlay">
+      <div class="spinner"></div>
+    </div>
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-sheet" id="modal-sheet">
+      <div class="modal-header">
+        <span class="title">Notification options</span>
+        <button class="header-button" id="modal-close-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M18.022,8.121C18.412,7.731 18.412,7.097 18.022,6.707C17.631,6.316 16.998,6.316 16.607,6.707L12.365,10.949L8.123,6.707C7.733,6.317 7.1,6.317 6.709,6.707C6.319,7.098 6.319,7.731 6.709,8.121L10.951,12.363L6.708,16.607C6.317,16.997 6.317,17.63 6.708,18.021C7.098,18.411 7.732,18.411 8.122,18.021L12.365,13.778L16.609,18.021C16.999,18.411 17.632,18.411 18.023,18.021C18.413,17.63 18.413,16.997 18.023,16.607L13.78,12.363L18.022,8.121Z"
+            />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-option" id="mark-all-read-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            fill="#000000"
+            d="M9.1297,15.7596L18.1353,6.1579C18.3242,5.9565 18.6406,5.9464 18.8421,6.1353C19.0435,6.3242 19.0536,6.6406 18.8647,6.8421L9.4854,16.8421C9.2846,17.0562 8.9434,17.052 8.7479,16.8331L5.1271,12.7802C4.9432,12.5743 4.961,12.2582 5.1669,12.0743C5.3728,11.8903 5.6889,11.9081 5.8729,12.114L9.1297,15.7596Z"
+            fill-rule="evenodd"
+          />
+        </svg>
+        <span>Mark all as read</span>
+      </div>
+    </div>
+    <div class="toast" id="read-toast">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path
+          d="M12 21a9 9 0 1 1 0-18a9 9 0 0 1 0 18zm0-1a8 8 0 1 0 0-16a8 8 0 0 0 0 16zm4.35-11.35a0.5 0.5 0 1 1 0.7 0.7l-7 7a0.5 0.5 0 0 1-0.71 0l-2.7-2.84a0.5 0.5 0 1 1 0.72-0.7l2.35 2.47l6.64-6.63z"
+        />
+      </svg>
+      <span>All notifications marked as read.</span>
+    </div>
+    <div class="toast" id="deleted-toast">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path
+          d="M12 21a9 9 0 1 1 0-18a9 9 0 0 1 0 18zm0-1a8 8 0 1 0 0-16a8 8 0 0 0 0 16zm4.35-11.35a0.5 0.5 0 1 1 0.7 0.7l-7 7a0.5 0.5 0 0 1-0.71 0l-2.7-2.84a0.5 0.5 0 1 1 0.72-0.7l2.35 2.47l6.64-6.63z"
+        />
+      </svg>
+      <span>Notification deleted.</span>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- LOCAL STORAGE KEYS ---
+        const DELETED_STORAGE_KEY = "deletedNotifications";
+        const READ_STORAGE_KEY = "readNotifications"; // New key for read status
+
+        let notifications = [];
+        const initialData = [
+          {
+            id: 1,
+            title: "Make money mobile",
+            subtitle: "Set up your mobile phone to send and receive money.",
+            read: false,
+          },
+          {
+            id: 2,
+            title: "Cash out quickly",
+            subtitle:
+              "Transfer money in minutes from PayPal right to your bank.",
+            read: false,
+          },
+          {
+            id: 3,
+            title: "Shop with confidence",
+            subtitle:
+              "Link a credit card to keep your financial info secure when buying online.",
+            read: false,
+          },
+        ];
+
+        // --- DOM ELEMENTS ---
+        const listContainer = document.getElementById("notifications-list");
+        const allDoneContainer = document.getElementById("all-done");
+        const optionsBtn = document.getElementById("options-btn");
+        const modalBackdrop = document.getElementById("modal-backdrop");
+        const modalSheet = document.getElementById("modal-sheet");
+        const modalCloseBtn = document.getElementById("modal-close-btn");
+        const markAllReadBtn = document.getElementById("mark-all-read-btn");
+        const loadingOverlay = document.getElementById("loading-overlay");
+        const readToast = document.getElementById("read-toast");
+        const deletedToast = document.getElementById("deleted-toast");
+
+        // --- LOCAL STORAGE HELPER FUNCTIONS ---
+        const getDeletedIds = () =>
+          JSON.parse(localStorage.getItem(DELETED_STORAGE_KEY)) || [];
+        const saveDeletedIds = (ids) =>
+          localStorage.setItem(DELETED_STORAGE_KEY, JSON.stringify(ids));
+        const getReadIds = () =>
+          JSON.parse(localStorage.getItem(READ_STORAGE_KEY)) || []; // New helper
+        const saveReadIds = (ids) =>
+          localStorage.setItem(READ_STORAGE_KEY, JSON.stringify(ids)); // New helper
+
+        // --- CORE FUNCTIONS ---
+
+        const loadNotifications = () => {
+          const deletedIds = getDeletedIds();
+          const readIds = getReadIds(); // Get read IDs from storage
+
+          // Filter out deleted items, then map over the rest to apply the saved read status
+          notifications = initialData
+            .filter((n) => !deletedIds.includes(n.id))
+            .map((n) => ({
+              ...n,
+              read: readIds.includes(n.id), // Set read status from storage
+            }));
+
+          renderNotifications();
+        };
+
+        const renderNotifications = () => {
+          listContainer.innerHTML = ""; // Clear previous items
+          if (notifications.length === 0) {
+            allDoneContainer.classList.add("visible");
+          } else {
+            allDoneContainer.classList.remove("visible");
+            notifications.forEach((notif) => {
+              const wrapper = document.createElement("div");
+              wrapper.className = "notification-swipe-wrapper";
+              wrapper.dataset.id = notif.id;
+              // Note: The 'faded' class is now correctly applied on initial render
+              wrapper.innerHTML = `
+                        <div class="notification-delete-bg">
+                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.25 4.5H16.5V3.75a2.25 2.25 0 0 0-2.25-2.25h-4.5A2.25 2.25 0 0 0 7.5 3.75V4.5H3.75a0.75 0.75 0 0 0 0 1.5H4.5v13.5A1.5 1.5 0 0 0 6 21h12a1.5 1.5 0 0 0 1.5-1.5V6h0.75a0.75 0.75 0 1 0 0-1.5zM9 3.75A0.75 0.75 0 0 1 9.75 3h4.5A0.75 0.75 0 0 1 15 3.75V4.5H9V3.75zm9 15.75H6V6h12v13.5zm-7.5-9.75v6a0.75 0.75 0 1 1-1.5 0v-6a0.75 0.75 0 0 1 1.5 0zm4.5 0v6a0.75 0.75 0 1 1-1.5 0v-6a0.75 0.75 0 1 1 1.5 0z"/></svg>
+                        </div>
+                        <div class="notification-item ${
+                          notif.read ? "faded" : ""
+                        }">
+                            <div class="notification-icon">
+                                <svg id="vector" xmlns="http://www.w3.org/2000/svg" viewBox="94 83 100 122.99"><path fill="#61ccff" d="M192.45 126.26c1.46 4.1 1.94 8.62 1.22 13.31-2.76 17.07-17.15 29.52-34.14 29.52H145.6l-5.82 36.9h-24.8l3.98-24.6 3.3-30.1 0.86-6.8h1.52l0.16-1.03 39.35-35.88c13.6 0 24.32 7.75 28.25 18.52l0.05 0.16Z" id="path_0"></path><path fill="#002992" d="M179.28 111.29c0 15.22-13.78 33.2-34.6 33.2h-20.06l-0.97 6.34-4.7 30.56H94L109 83h40.42c13.6 0 24.32 7.75 28.25 18.52 1.13 3.13 1.68 6.44 1.6 9.77Z" id="path_1"></path><path fill="#008bff" d="M179.28 111.29c-4.29-2.3-9.5-3.7-15.16-3.7h-33.84l-5.66 36.9h20.06c20.82 0 34.6-17.98 34.6-33.2Z" id="path_2"></path></svg> </div>
+                            <div class="notification-content">
+                                <div class="title">${notif.title}</div>
+                                <div class="subtitle">${notif.subtitle}</div>
+                            </div>
+                        </div>
+                    `;
+              listContainer.appendChild(wrapper);
+            });
+          }
+          addSwipeListeners();
+        };
+
+        const handleMarkAllRead = () => {
+          toggleModal(false);
+          loadingOverlay.classList.add("visible");
+          setTimeout(() => {
+            loadingOverlay.classList.remove("visible");
+
+            // Update the in-memory state
+            notifications.forEach((n) => (n.read = true));
+
+            // --- UPDATE LOCAL STORAGE ---
+            const existingReadIds = getReadIds();
+            const newReadIds = notifications.map((n) => n.id);
+            // Combine old and new IDs, using a Set to automatically handle duplicates
+            const combinedIds = [
+              ...new Set([...existingReadIds, ...newReadIds]),
+            ];
+            saveReadIds(combinedIds); // Save the updated list back to storage
+
+            // Update the UI
+            document
+              .querySelectorAll(".notification-item")
+              .forEach((item) => item.classList.add("faded"));
+            showToast(readToast);
+          }, 3000);
+        };
+
+        const deleteNotification = (id) => {
+          const wrapper = document.querySelector(
+            `.notification-swipe-wrapper[data-id="${id}"]`
+          );
+          if (!wrapper) return;
+
+          const item = wrapper.querySelector(".notification-item");
+          wrapper.style.height = `${item.offsetHeight}px`;
+          requestAnimationFrame(() => wrapper.classList.add("deleting"));
+
+          setTimeout(() => {
+            const deletedIds = getDeletedIds();
+            if (!deletedIds.includes(parseInt(id))) {
+              deletedIds.push(parseInt(id));
+              saveDeletedIds(deletedIds);
+            }
+            loadNotifications(); // Reload and re-render the list
+            showToast(deletedToast);
+          }, 300);
+        };
+
+        const toggleModal = (v) => {
+          modalBackdrop.classList.toggle("visible", v);
+          modalSheet.classList.toggle("visible", v);
+        };
+
+        const showToast = (toastEl) => {
+          toastEl.classList.add("visible");
+          setTimeout(() => toastEl.classList.remove("visible"), 3000);
+        };
+
+        function addSwipeListeners() {
+          document.querySelectorAll(".notification-item").forEach((item) => {
+            let startX = 0,
+              currentX = 0,
+              isDragging = false;
+            const onTouchStart = (e) => {
+              startX = e.touches[0].clientX;
+              isDragging = true;
+              item.style.transition = "none";
+            };
+            const onTouchMove = (e) => {
+              if (!isDragging) return;
+              currentX = e.touches[0].clientX - startX;
+              if (currentX < 0) {
+                item.style.transform = `translateX(${currentX}px)`;
+              }
+            };
+            const onTouchEnd = () => {
+              if (!isDragging) return;
+              isDragging = false;
+              item.style.transition = "transform 0.3s ease";
+              const swipePercentage =
+                (Math.abs(currentX) / item.offsetWidth) * 100;
+              if (swipePercentage > 70) {
+                const id = item.closest(".notification-swipe-wrapper").dataset
+                  .id;
+                deleteNotification(id);
+              } else {
+                item.style.transform = "translateX(0px)";
+              }
+              currentX = 0;
+            };
+            item.addEventListener("touchstart", onTouchStart, {
+              passive: true,
+            });
+            item.addEventListener("touchmove", onTouchMove, { passive: true });
+            item.addEventListener("touchend", onTouchEnd);
+          });
+        }
+
+        // --- EVENT LISTENERS ---
+        optionsBtn.addEventListener("click", () => toggleModal(true));
+        modalCloseBtn.addEventListener("click", () => toggleModal(false));
+        modalBackdrop.addEventListener("click", () => toggleModal(false));
+        markAllReadBtn.addEventListener("click", handleMarkAllRead);
+
+        // --- INITIAL LOAD ---
+        loadNotifications();
+      });
+    </script>
+  </body>
+</html>

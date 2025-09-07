@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add to Wallet Modal</title>
+    <!-- CSS will go here -->
+    <style>
+      /* CSS from the next block goes here */
+      /* --- FONT DEFINITIONS --- */
+      @font-face {
+        font-family: "PayPal-Sans-Black";
+        src: url("fonts/pay_pal_pro_black.otf") format("opentype");
+        font-weight: 900;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "PayPal-Open-Regular";
+        src: url("fonts/pay_pal_open_regular.otf") format("opentype");
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      /* --- GLOBAL STYLES --- */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "PayPal-Open-Regular", -apple-system, sans-serif;
+        background-color: #f6f7f9;
+        color: #000000;
+      }
+      .placeholder-content {
+        padding: 24px;
+        font-size: 1.5rem;
+      }
+
+      /* --- MODAL BACKDROP --- */
+      .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        z-index: 998;
+      }
+      .modal-backdrop.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      /* --- GENERAL MODAL STYLES --- */
+      .modal {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-width: 448px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        z-index: 999;
+        transform: translateY(100%);
+        transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        display: flex;
+        flex-direction: column;
+      }
+      .modal.visible {
+        transform: translateY(0);
+      }
+
+      /* --- "ADD TO WALLET" MODAL --- */
+      #modal-add-to-wallet {
+        border-radius: 24px 24px 0 0;
+        padding: 16px;
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px;
+        margin-bottom: 16px;
+      }
+      .modal-title {
+        font-family: "PayPal-Sans-Black", sans-serif;
+        font-size: 1.2rem;
+        font-weight: 900;
+      }
+      .modal-close-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+      }
+      .modal-close-btn svg {
+        width: 24px;
+        height: 24px;
+      }
+      .wallet-option-list {
+        padding: 0 8px 16px;
+      }
+      .wallet-option {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 16px 0;
+        cursor: pointer;
+      }
+      .wallet-option-icon {
+        flex-shrink: 0;
+      }
+      .wallet-option-icon svg {
+        width: 28px;
+        height: 28px;
+      }
+      .wallet-option-text .title {
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 4px;
+      }
+      .wallet-option-text .subtitle {
+        font-size: 0.9rem;
+        color: #545d68;
+        line-height: 1.4;
+      }
+
+      /* --- "LINK A CARD" MODAL --- STYLES UPDATED HERE --- */
+      #modal-link-card {
+        border-radius: 24px 24px 0 0;
+        max-height: 90vh;
+      }
+
+      /* 1. Header uses flexbox to position buttons and is relative for title centering */
+      #modal-link-card .modal-header {
+        display: flex;
+        justify-content: space-between; /* This pushes the buttons to the edges */
+        align-items: center;
+        position: relative; /* This is the anchor for the absolute title */
+        padding: 16px;
+        margin-bottom: 8px;
+      }
+
+      /* 2. Title is perfectly centered using absolute positioning */
+      #modal-link-card .modal-title {
+        font-family: "PayPal-Open-Regular", -apple-system, sans-serif; /* Use a standard font */
+        font-size: 1rem;
+        font-weight: 500; /* Regular weight */
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+      }
+
+      /* 3. Button-specific styles are removed as Flexbox handles the layout */
+      #modal-link-card .modal-back-btn {
+        /* No absolute positioning needed */
+      }
+      #modal-link-card .modal-close-btn {
+        /* No absolute positioning needed */
+      }
+      /* --- END OF HEADER STYLE UPDATES --- */
+
+      .modal-content {
+        padding: 0 24px;
+        overflow-y: auto;
+        flex-grow: 1;
+      }
+      .form-action-header {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 8px;
+      }
+      .scan-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #0070ba;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .scan-button svg {
+        width: 24px;
+        height: 24px;
+      }
+      .scan-button svg path {
+        fill: #0070ba;
+      }
+
+      .form-group {
+        position: relative;
+        margin-bottom: 16px;
+      }
+      .input-field {
+        width: 100%;
+        padding: 16px;
+        border: 1px solid #c4c4c4;
+        border-radius: 12px;
+        font-family: "PayPal-Open-Regular", sans-serif;
+        font-size: 1rem;
+        outline: none;
+      }
+      .input-field:focus {
+        border-color: #0070ba;
+      }
+      .input-with-icon-left {
+        padding-left: 50px;
+      }
+      .input-icon-left {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .input-icon-left svg {
+        width: 24px;
+        height: 24px;
+      }
+      .input-action-right {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+      }
+      .input-action-right svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 16px;
+      }
+      .form-row .form-group {
+        flex: 1;
+      }
+      .billing-section {
+        margin-top: 32px;
+        padding-bottom: 16px;
+      }
+      .billing-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      .billing-title {
+        font-weight: 700;
+      }
+      .change-link {
+        color: #0070ba;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .address-block {
+        font-size: 1rem;
+        color: #545d68;
+        line-height: 1.5;
+      }
+
+      .modal-footer {
+        padding: 16px 24px;
+        margin-top: auto;
+        flex-shrink: 0;
+        border-top: 1px solid #f0f0f0;
+      }
+      .primary-btn {
+        width: 100%;
+        background-color: #000000;
+        color: #ffffff;
+        border: none;
+        padding: 16px;
+        font-family: "PayPal-Open-Regular", sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        border-radius: 30px;
+        cursor: pointer;
+      }
+      /* --- NEW "FEATURE NOT IMPLEMENTED" MODAL STYLES --- */
+      #modal-feature-not-implemented {
+        border-radius: 24px 24px 0 0;
+        padding: 16px;
+      }
+      .feature-not-implemented-content {
+        padding: 40px 24px;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      /* --- NEW VALIDATION STYLES --- */
+      .input-field.input-error {
+        border-color: #d70000; /* Red border for invalid fields */
+      }
+
+      .error-message {
+        color: #d70000;
+        font-size: 0.8rem;
+        margin-top: 4px;
+        padding-left: 4px;
+        display: none; /* Hidden by default */
+      }
+      .error-message.visible {
+        display: block; /* Shown when there is an error */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="placeholder-content">
+      <button id="open-wallet-modal-btn">Open Add to Wallet Modal</button>
+    </div>
+
+    <!-- MODAL 1: ADD TO WALLET -->
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal" id="modal-add-to-wallet">
+      <div class="modal-header">
+        <span class="modal-title">Add to Wallet</span>
+        <button class="modal-close-btn" data-close-modal="modal-add-to-wallet">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M18.022,8.121C18.412,7.731 18.412,7.097 18.022,6.707C17.631,6.316 16.998,6.316 16.607,6.707L12.365,10.949L8.123,6.707C7.733,6.317 7.1,6.317 6.709,6.707C6.319,7.098 6.319,7.731 6.709,8.121L10.951,12.363L6.708,16.607C6.317,16.997 6.317,17.63 6.708,18.021C7.098,18.411 7.732,18.411 8.122,18.021L12.365,13.778L16.609,18.021C16.999,18.411 17.632,18.411 18.023,18.021C18.413,17.63 18.413,16.997 18.023,16.607L13.78,12.363L18.022,8.121Z"
+            />
+          </svg>
+        </button>
+      </div>
+      <div class="wallet-option-list">
+        <div class="wallet-option" id="open-bank-modal-btn">
+          <div class="wallet-option-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                fill="#000000"
+                d="M2.25 9.75H4.5v6H3a0.75 0.75 0 1 0 0 1.5h18a0.75 0.75 0 1 0 0-1.5h-1.5v-6h2.25a0.75 0.75 0 0 0 0.4-1.39l-9.76-6a0.75 0.75 0 0 0-0.78 0l-9.75 6a0.75 0.75 0 0 0 0.39 1.39zm3.75 0h3v6H6v-6zm7.5 0v6h-3v-6h3zm4.5 6h-3v-6h3v6zM12 3.88l7.1 4.37H4.9L12 3.88zM23.25 19.5a0.75 0.75 0 0 1-0.75 0.75h-21a0.75 0.75 0 1 1 0-1.5h21a0.75 0.75 0 0 1 0.75 0.75z"
+              />
+            </svg>
+          </div>
+          <div class="wallet-option-text">
+            <div class="title">Bank accounts</div>
+            <div class="subtitle">
+              Transfer money you receive to your bank account.
+            </div>
+          </div>
+        </div>
+        <div class="wallet-option" id="open-link-card-btn">
+          <div class="wallet-option-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                fill="#000000"
+                d="M21 4.5H3A1.5 1.5 0 0 0 1.5 6v12A1.5 1.5 0 0 0 3 19.5h18a1.5 1.5 0 0 0 1.5-1.5V6A1.5 1.5 0 0 0 21 4.5zM21 6v2.25H3V6h18zm0 12H3V9.75h18V18zm-1.5-2.25a0.75 0.75 0 0 1-0.75 0.75h-3a0.75 0.75 0 1 1 0-1.5h3a0.75 0.75 0 0 1 0.75 0.75zm-6 0a0.75 0.75 0 0 1-0.75 0.75h-1.5a0.75 0.75 0 1 1 0-1.5h1.5a0.75 0.75 0 0 1 0.75 0.75z"
+              />
+            </svg>
+          </div>
+          <div class="wallet-option-text">
+            <div class="title">Debit and credit cards</div>
+            <div class="subtitle">
+              Keep your card information secure when shopping
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 2: LINK A CARD - STRUCTURE UPDATED HERE -->
+    <div class="modal" id="modal-link-card">
+      <div class="modal-header">
+        <button class="modal-close-btn modal-back-btn" id="link-card-back-btn">
+          <!-- 4. New, simpler SVG for the back arrow -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M19 12H5"></path>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <span class="modal-title">Link a card</span>
+        <button class="modal-close-btn" data-close-modal="modal-link-card">
+          <!-- 5. New, simpler SVG for the close icon -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-content">
+        <!-- New container for the scan button -->
+        <div class="form-action-header">
+          <div class="scan-button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                d="M19.5 5.25h-2.6l-1.28-1.92A0.75 0.75 0 0 0 15 3H9a0.75 0.75 0 0 0-0.62 0.33L7.1 5.25H4.5A2.25 2.25 0 0 0 2.25 7.5V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V7.5a2.25 2.25 0 0 0-2.25-2.25zM20.25 18a0.75 0.75 0 0 1-0.75 0.75h-15A0.75 0.75 0 0 1 3.75 18V7.5A0.75 0.75 0 0 1 4.5 6.75h3a0.75 0.75 0 0 0 0.62-0.33L9.4 4.5h5.2l1.28 1.92a0.75 0.75 0 0 0 0.62 0.33h3a0.75 0.75 0 0 1 0.75 0.75V18zM12 8.25a4.13 4.13 0 1 0 0 8.25a4.13 4.13 0 0 0 0-8.25zM12 15a2.63 2.63 0 1 1 0-5.25A2.63 2.63 0 0 1 12 15z"
+              />
+            </svg>
+            <span>Scan</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-icon-left">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                fill="#545d68"
+                d="M21 4.5H3A1.5 1.5 0 0 0 1.5 6v12A1.5 1.5 0 0 0 3 19.5h18a1.5 1.5 0 0 0 1.5-1.5V6A1.5 1.5 0 0 0 21 4.5zM21 6v2.25H3V6h18zm0 12H3V9.75h18V18zm-1.5-2.25a0.75 0.75 0 0 1-0.75 0.75h-3a0.75 0.75 0 1 1 0-1.5h3a0.75 0.75 0 0 1 0.75 0.75zm-6 0a0.75 0.75 0 0 1-0.75 0.75h-1.5a0.75 0.75 0 1 1 0-1.5h1.5a0.75 0.75 0 0 1 0.75 0.75z"
+              />
+            </svg>
+          </div>
+          <!-- Scan button removed from here -->
+          <input
+            type="text"
+            class="input-field input-with-icon-left"
+            placeholder="Card number"
+          />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <input type="text" class="input-field" placeholder="Expiry" />
+          </div>
+          <div class="form-group">
+            <input type="text" class="input-field" placeholder="CVV" />
+            <div class="input-action-right">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path
+                  fill="#000000"
+                  d="M12 3a9 9 0 1 1 0 18a9 9 0 0 1 0-18zm0 1a8 8 0 1 0 0 16a8 8 0 0 0 0-16zm0.06 12c0.3 0 0.55 0.25 0.55 0.56c0 0.3-0.25 0.55-0.55 0.55a0.56 0.56 0 0 1-0.56-0.55c0-0.31 0.25-0.56 0.56-0.56zM11.79 6c1.92 0 3.51 1.37 3.51 3.41c0 1.6-0.93 2.74-2.68 3.38l-0.12 0.05v1.24a0.5 0.5 0 0 1-0.41 0.5H12a0.5 0.5 0 0 1-0.5-0.4v-0.1v-1.98l0.36-0.1c1.67-0.5 2.44-1.35 2.44-2.59C14.3 7.96 13.18 7 11.79 7C10.66 7 9.6 7.68 9.5 8.33L9.5 8.44a0.5 0.5 0 0 1-1 0C8.5 7.1 10.12 6 11.79 6z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="billing-section">
+          <div class="billing-header">
+            <span class="billing-title">Billing address</span>
+            <span class="change-link">Change</span>
+          </div>
+          <div class="address-block">
+            123 Main Street<br />
+            San Jose, CA 95131<br />
+            United States
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="primary-btn" id="link-card-btn">Link Card</button>
+      </div>
+      <!-- Add this new modal anywhere inside the <body> -->
+      <div class="modal" id="modal-feature-not-implemented">
+        <div class="modal-header">
+          <span class="modal-title"></span>
+          <button
+            class="modal-close-btn"
+            data-close-modal="modal-feature-not-implemented"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                d="M18.022,8.121C18.412,7.731 18.412,7.097 18.022,6.707C17.631,6.316 16.998,6.316 16.607,6.707L12.365,10.949L8.123,6.707C7.733,6.317 7.1,6.317 6.709,6.707C6.319,7.098 6.319,7.731 6.709,8.121L10.951,12.363L6.708,16.607C6.317,16.997 6.317,17.63 6.708,18.021C7.098,18.411 7.732,18.411 8.122,18.021L12.365,13.778L16.609,18.021C16.999,18.411 17.632,18.411 18.023,18.021C18.413,17.63 18.413,16.997 18.023,16.607L13.78,12.363L18.022,8.121Z"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="feature-not-implemented-content">
+          Feature not implemented yet.
+        </div>
+      </div>
+
+      <!-- Add a new toast notification for success -->
+      <div class="toast" id="success-toast">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M12 21a9 9 0 1 1 0-18a9 9 0 0 1 0 18zm0-1a8 8 0 1 0 0-16a8 8 0 0 0 0 16zm4.35-11.35a0.5 0.5 0 1 1 0.7 0.7l-7 7a0.5 0.5 0 0 1-0.71 0l-2.7-2.84a0.5 0.5 0 1 1 0.72-0.7l2.35 2.47l6.64-6.63z"
+          />
+        </svg>
+        <span>Card linked successfully!</span>
+      </div>
+    </div>
+
+    <!-- Script will go here -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Modal Elements
+        const backdrop = document.getElementById("modal-backdrop");
+        const walletModal = document.getElementById("modal-add-to-wallet");
+        const linkCardModal = document.getElementById("modal-link-card");
+        const featureModal = document.getElementById(
+          "modal-feature-not-implemented"
+        ); // New modal
+
+        // Button Elements
+        const openWalletBtn = document.getElementById("open-wallet-modal-btn");
+        const openLinkCardBtn = document.getElementById("open-link-card-btn");
+        const openBankModalBtn = document.getElementById("open-bank-modal-btn"); // New button
+        const linkCardBackBtn = document.getElementById("link-card-back-btn");
+        const linkCardBtn = document.getElementById("link-card-btn"); // New button
+        const allCloseBtns = document.querySelectorAll("[data-close-modal]");
+
+        // Form Input Elements
+        const cardNumberInput = document.getElementById("card-number");
+        const cardExpiryInput = document.getElementById("card-expiry");
+        const cardCvvInput = document.getElementById("card-cvv");
+
+        // Error Message Elements
+        const cardNumberError = document.getElementById("card-number-error");
+        const cardExpiryError = document.getElementById("card-expiry-error");
+        const cardCvvError = document.getElementById("card-cvv-error");
+
+        // --- Modal Control Functions ---
+        const showModal = (modalEl) => {
+          backdrop.classList.add("visible");
+          modalEl.classList.add("visible");
+        };
+        const hideModal = (modalEl) => {
+          backdrop.classList.remove("visible");
+          modalEl.classList.remove("visible");
+        };
+
+        // --- NEW Validation and Local Storage Logic ---
+        const validateAndSaveCard = () => {
+          let isValid = true;
+
+          // Reset previous errors
+          [cardNumberInput, cardExpiryInput, cardCvvInput].forEach((input) =>
+            input.classList.remove("input-error")
+          );
+          [cardNumberError, cardExpiryError, cardCvvError].forEach((error) => {
+            error.textContent = "";
+            error.classList.remove("visible");
+          });
+
+          // 1. Validate Card Number
+          const cardNumber = cardNumberInput.value.replace(/\s/g, ""); // Remove spaces
+          if (cardNumber.length !== 16 || !/^\d+$/.test(cardNumber)) {
+            isValid = false;
+            cardNumberInput.classList.add("input-error");
+            cardNumberError.textContent =
+              "Please enter a valid 16-digit card number.";
+            cardNumberError.classList.add("visible");
+          }
+
+          // 2. Validate Expiry Date
+          const cardExpiry = cardExpiryInput.value;
+          const expiryRegex = /^(0[1-9]|1[0-2])\/?([0-9]{2})$/;
+          if (!expiryRegex.test(cardExpiry)) {
+            isValid = false;
+            cardExpiryInput.classList.add("input-error");
+            cardExpiryError.textContent = "Please use MM/YY format.";
+            cardExpiryError.classList.add("visible");
+          }
+
+          // 3. Validate CVV
+          const cardCvv = cardCvvInput.value;
+          if (
+            cardCvv.length < 3 ||
+            cardCvv.length > 4 ||
+            !/^\d+$/.test(cardCvv)
+          ) {
+            isValid = false;
+            cardCvvInput.classList.add("input-error");
+            cardCvvError.textContent = "Enter a valid 3 or 4-digit CVV.";
+            cardCvvError.classList.add("visible");
+          }
+
+          // If all fields are valid, save to local storage
+          if (isValid) {
+            const cardDetails = {
+              cardNumber: cardNumber.slice(-4), // Only store the last 4 digits for security
+              cardExpiry: cardExpiry,
+            };
+            localStorage.setItem(
+              "linkedCardDetails",
+              JSON.stringify(cardDetails)
+            );
+
+            alert("Card linked successfully!"); // Simple success feedback
+            hideModal(linkCardModal); // Close modal on success
+          }
+        };
+
+        // --- Event Listeners ---
+        openWalletBtn.addEventListener("click", () => showModal(walletModal));
+        openLinkCardBtn.addEventListener("click", () => {
+          hideModal(walletModal);
+          setTimeout(() => showModal(linkCardModal), 200);
+        });
+
+        // New listener for "Bank accounts"
+        openBankModalBtn.addEventListener("click", () => {
+          hideModal(walletModal);
+          setTimeout(() => showModal(featureModal), 200);
+        });
+
+        allCloseBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const modalId = btn.getAttribute("data-close-modal");
+            const modalToClose = document.getElementById(modalId);
+            if (modalToClose) hideModal(modalToClose);
+          });
+        });
+
+        linkCardBackBtn.addEventListener("click", () => {
+          hideModal(linkCardModal);
+          setTimeout(() => showModal(walletModal), 200);
+        });
+
+        // New listener for the final "Link Card" button
+        linkCardBtn.addEventListener("click", validateAndSaveCard);
+
+        backdrop.addEventListener("click", () => {
+          hideModal(walletModal);
+          hideModal(linkCardModal);
+          hideModal(featureModal); // Also hide the new modal
+        });
+      });
+    </script>
+  </body>
+</html>

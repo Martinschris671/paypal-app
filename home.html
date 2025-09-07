@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PayPal Clone</title>
+    <!-- The updated CSS from below will go here -->
+    <style>
+      /* --- FONT DEFINITIONS --- */
+      @font-face {
+        font-family: "PayPal-Sans"; /* For buttons */
+        src: url("fonts/PayPalProSWeb-Book.woff2") format("woff2");
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: "PayPal-Sans-Black"; /* For balance amount */
+        src: url("fonts/pay_pal_pro_black.otf") format("opentype");
+        font-weight: 900;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: "PayPal-Open-Regular"; /* For all other text */
+        src: url("fonts/pay_pal_open_regular.otf") format("opentype");
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        /* Set the new default font for the page */
+        font-family: "PayPal-Open-Regular", -apple-system, BlinkMacSystemFont,
+          "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+          "Helvetica Neue", sans-serif;
+        background-color: #eff2f9;
+        color: #333;
+      }
+
+      #mobile-container {
+        max-width: 448px;
+        margin: 0 auto;
+        background-color: #eff2f9;
+        position: relative;
+        min-height: 100vh;
+        padding-bottom: 180px;
+      }
+
+      /* --- Header Section --- */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+      }
+
+      .header-icon-group {
+        display: flex;
+        gap: 12px;
+      }
+
+      .icon-container {
+        width: 40px;
+        height: 40px;
+        background-color: #ffffff;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      .icon-container svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .icon-container svg path {
+        fill: #1262d0;
+      }
+
+      /* --- Main Content Area --- */
+      main {
+        padding: 0;
+      }
+
+      /* Balance Card -- PIXEL PERFECT UPDATE */
+      .balance-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin: 10px 16px 0;
+        /* Adjusted padding for a shorter height */
+        padding: 16px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 14px; /* Space between icon and text */
+        min-height: initial; /* Reset min-height to allow content to define it */
+      }
+
+      .balance-card .paypal-logo {
+        /* This div is now the circular container for the icon */
+        width: 40px;
+        height: 40px;
+        background-color: #f6f5f0; /* Light background for the icon container */
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .balance-card .paypal-logo svg {
+        /* Smaller SVG inside the new container */
+        width: 28px;
+        height: 28px;
+      }
+
+      .balance-text {
+        display: flex;
+        flex-direction: column;
+        /* gap: 2px; */
+        transform: translateY(5px);
+      }
+
+      .balance-card h2 {
+        font-family: "PayPal-Sans-Black", sans-serif;
+        /* Adjusted font size to perfectly match the image */
+        font-size: 1.9rem;
+        font-weight: 900;
+        color: #000000;
+        letter-spacing: -0.5px;
+        line-height: 1.1;
+      }
+
+      .balance-card p {
+        font-size: 0.9rem;
+        color: #545d68;
+        margin-top: 4px; /* Slight space between balance and text */
+      }
+      /* Send Payments Section */
+      .send-payments-section {
+        margin-top: 35px;
+      }
+
+      .send-payments-section > h2 {
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin: 0 16px 12px 16px;
+        color: #000;
+      }
+
+      .payment-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin: 0 16px;
+        padding: 12px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        position: relative;
+        padding-bottom: 36px;
+      }
+
+      .payment-card-icon {
+        flex-shrink: 0;
+      }
+
+      .payment-card-icon svg {
+        width: 63px;
+        height: 63px;
+      }
+
+      .payment-card-text {
+        display: flex;
+        flex-direction: column;
+        padding-top: 12px;
+        gap: 6px;
+      }
+
+      .payment-card-text .title {
+        font-weight: normal;
+        font-size: 17px;
+        color: #000;
+      }
+
+      .payment-card-text .subtitle {
+        font-size: 0.9rem;
+        color: #545d68;
+        margin-top: 4px;
+      }
+
+      .payment-card-text a.send-now-link {
+        font-weight: 600;
+        color: #1262d0;
+        text-decoration: underline;
+        font-size: 0.8rem;
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      /* --- Footer Section --- */
+      footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-width: 448px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 10px 16px 0 16px;
+        border-top: 1px solid #f0f0f0;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+      .action-buttons-container {
+        display: flex;
+        justify-content: center;
+        gap: 18px;
+        margin-bottom: 12px;
+      }
+
+      .action-button {
+        /* Applied specific font for buttons */
+        font-family: "PayPal-Sans", sans-serif;
+        background-color: #000000;
+        color: #ffffff;
+        border: none;
+        border-radius: 30px;
+        padding: 12px 0;
+        width: 100%;
+        font-size: 1.15rem;
+        font-weight: 700;
+        cursor: pointer;
+        text-align: center;
+      }
+
+      .bottom-nav {
+        display: flex;
+        justify-content: space-around;
+        padding-bottom: 10px;
+      }
+
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+      }
+
+      .nav-item svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      .nav-item span {
+        font-size: 0.8rem;
+      }
+
+      /* Active/Inactive Nav States */
+      .nav-item.active svg path {
+        fill: #000000;
+      }
+      .nav-item.active span {
+        color: #000000;
+        font-weight: 700;
+      }
+      .nav-item.inactive svg path {
+        fill: #545d68;
+      }
+      .nav-item.inactive span {
+        color: #545d68;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mobile-container">
+      <!-- Header -->
+      <header>
+        <a href="menu.html">
+          <div class="icon-container">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M21 12a0.75 0.75 0 0 1-0.75 0.75H3.75a0.75 0.75 0 1 1 0-1.5h16.5A0.75 0.75 0 0 1 21 12zM3.75 6.75h16.5a0.75 0.75 0 1 0 0-1.5H3.75a0.75 0.75 0 0 0 0 1.5zm16.5 10.5H3.75a0.75 0.75 0 1 0 0 1.5h16.5a0.75 0.75 0 1 0 0-1.5z"
+              />
+            </svg></div
+        ></a>
+        <div class="header-icon-group">
+          <a href="notifications.html">
+            <div class="icon-container">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M20.8 16.5c-0.53-0.9-1.3-3.44-1.3-6.75a7.5 7.5 0 0 0-15 0c0 3.31-0.77 5.84-1.3 6.74a1.5 1.5 0 0 0 1.3 2.26h3.83a3.75 3.75 0 0 0 7.34 0h3.83a1.5 1.5 0 0 0 1.3-2.26zM12 20.24a2.25 2.25 0 0 1-2.12-1.5h4.24a2.25 2.25 0 0 1-2.12 1.5zm-7.5-3C5.22 16 6 13.13 6 9.75a6 6 0 1 1 12 0c0 3.38 0.78 6.25 1.5 7.5h-15z"
+                />
+              </svg></div
+          ></a>
+          <a href="profile.html"
+            ><div class="icon-container">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M21.65 19.88c-1.43-2.47-3.63-4.24-6.2-5.08a6.75 6.75 0 1 0-6.9 0c-2.57 0.84-4.77 2.6-6.2 5.07a0.75 0.75 0 1 0 1.3 0.75c1.77-3.05 4.89-4.87 8.35-4.87s6.58 1.82 8.35 4.88a0.75 0.75 0 1 0 1.3-0.75zM6.75 9a5.25 5.25 0 1 1 10.5 0a5.25 5.25 0 0 1-10.5 0z"
+                />
+              </svg></div
+          ></a>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main>
+        <!-- Balance Card - UPDATED STRUCTURE -->
+        <section class="balance-card">
+          <div class="paypal-logo">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="96"
+              height="96"
+              viewBox="0 0 96 96"
+            >
+              <defs>
+                <clipPath id="clip_path_0">
+                  <path d="M48,48m-48,0a48,48 0,1 1,96 0a48,48 0,1 1,-96 0" />
+                </clipPath>
+              </defs>
+              <g>
+                <path
+                  fill="#f6f5f0"
+                  d="M48,48m-47.5,0a47.5,47.5 0,1 1,95 0a47.5,47.5 0,1 1,-95 0"
+                  stroke="#f7f5f0"
+                  stroke-width="1.0"
+                  clip-path="url(#clip_path_0)"
+                />
+                <path
+                  fill="#009cde"
+                  d="M67.8668,33.6003C68.6668,29.067 67.8668,25.867 65.3334,23.067C62.8001,20.0003 57.8668,18.667 51.4668,18.667H33.4668C32.1334,18.667 31.0668,19.6003 30.8001,20.9337L23.2001,69.067C23.0668,70.0003 23.7334,70.8003 24.6668,70.8003H35.8668L35.0668,75.7337C34.9334,76.667 35.6001,77.3337 36.4001,77.3337H45.8668C47.0668,77.3337 48.0001,76.4003 48.1334,75.467L48.2668,75.067L50.0001,63.867L50.1334,63.3337C50.2668,62.267 51.3334,61.467 52.4001,61.467H53.8668C63.0668,61.467 70.2668,57.7337 72.4001,46.9337C73.3334,42.5337 72.8001,38.667 70.5334,36.0003C69.8668,34.8003 68.9334,34.1337 67.8668,33.6003Z"
+                  fill-rule="evenodd"
+                />
+                <path
+                  fill="#012169"
+                  d="M67.8668,33.6003C68.6668,29.067 67.8668,25.867 65.3334,23.067C62.8001,20.0003 57.8668,18.667 51.4668,18.667H33.4668C32.1334,18.667 31.0668,19.6003 30.8001,20.9337L23.2001,69.067C23.0668,70.0003 23.7334,70.8003 24.6668,70.8003H35.8668L38.6668,52.9337L38.5334,53.467C38.8001,52.1337 40.0001,51.2003 41.2001,51.2003H46.5334C57.0668,51.2003 65.2001,46.9337 67.7334,34.667C67.7334,34.267 67.8668,33.867 67.8668,33.6003Z"
+                  fill-rule="evenodd"
+                />
+                <path
+                  fill="#003087"
+                  d="M41.8668,33.6003C42.0001,32.8003 42.4001,32.267 43.2001,31.867C43.4668,31.7337 43.7334,31.6003 44.2668,31.6003H58.5334C60.1334,31.7337 61.7334,31.867 63.3334,32.0003C63.7334,32.0003 64.1334,32.1337 64.5334,32.267C64.9334,32.4003 65.3334,32.4003 65.7334,32.5337C65.8668,32.5337 66.0001,32.667 66.2668,32.667C67.0668,32.9337 67.6001,33.067 68.1334,33.6003C68.9334,29.067 68.1334,25.867 65.6001,23.067C62.9334,20.0003 58.0001,18.667 51.6001,18.667H33.4668C32.1334,18.667 31.0668,19.6003 30.8001,20.9337L23.2001,69.067C23.0668,70.0003 23.7334,70.8003 24.6668,70.8003H35.8668L41.8668,33.6003Z"
+                  fill-rule="evenodd"
+                />
+              </g>
+            </svg>
+          </div>
+          <div class="balance-text">
+            <h2>US$0.00</h2>
+            <p>PayPal balance</p>
+          </div>
+        </section>
+
+        <!-- Send Payments Section -->
+        <section class="send-payments-section">
+          <h2>Send Payments</h2>
+          <div class="payment-card">
+            <div class="payment-card-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="96"
+                height="96"
+                viewBox="0 0 96 96"
+              >
+                <path
+                  fill="#5bbbfc"
+                  d="M12 24a4 4 0 0 1 4-4h56a4 4 0 0 1 4 4v32a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4V24z"
+                />
+                <path
+                  fill="#6fc400"
+                  d="M20 40a4 4 0 0 1 4-4h56a4 4 0 0 1 4 4v32a4 4 0 0 1-4 4H24a4 4 0 0 1-4-4V40z"
+                />
+                <path
+                  fill="#faf8f5"
+                  d="M76 36v20a4 4 0 0 1-4 4H20V40a4 4 0 0 1 4-4h52z"
+                />
+                <path
+                  fill="#001c64"
+                  d="M57.99 49.99H33a1 1 0 0 1-1-1v-1.5a1 1 0 0 1 1-1h24.85l-3.3-3.3a1 1 0 0 1 0-1.42l1.05-1.06a1 1 0 0 1 1.42 0l6.89 6.89a1 1 0 0 1 0 1.42l-6.9 6.89a1 1 0 0 1-1.4 0l-1.07-1.06a1 1 0 0 1 0-1.42L58 50z"
+                />
+              </svg>
+            </div>
+            <div class="payment-card-text">
+              <p class="title">Pay From Your Phone</p>
+              <p class="subtitle">For the things you love.</p>
+              <a href="#" class="send-now-link">Send now</a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- Footer -->
+      <footer>
+        <div class="action-buttons-container">
+          <button
+            class="action-button"
+            onclick="window.location.href='send.html'"
+          >
+            Send
+          </button>
+
+          <button
+            class="action-button"
+            onclick="window.location.href='request.html'"
+          >
+            Request
+          </button>
+        </div>
+        <nav class="bottom-nav">
+          <div class="nav-item active">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M22.5 19.5H21v-6.75l0.22 0.22a0.75 0.75 0 0 0 1.06-1.06l-9.22-9.22a1.5 1.5 0 0 0-2.12 0l-9.22 9.22a0.75 0.75 0 1 0 1.06 1.06L3 12.75v6.75H1.5a0.75 0.75 0 0 0 0 1.5h21a0.75 0.75 0 1 0 0-1.5zm-18-8.25l7.5-7.5l7.5 7.5v8.25H15v-5.25a0.75 0.75 0 0 0-0.75-0.75h-4.5A0.75 0.75 0 0 0 9 14.25v5.25H4.5v-8.25zm9 8.25h-3V15h3v4.5z"
+              />
+            </svg>
+            <span>Home</span>
+          </div>
+          <a href="payments.html">
+            <div class="nav-item inactive">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M14.25 11.25h-1.5v-6h0.75a3 3 0 0 1 3 3a0.75 0.75 0 1 0 1.5 0a4.5 4.5 0 0 0-4.5-4.5h-0.75v-1.5a0.75 0.75 0 1 0-1.5 0v1.5H10.5a4.5 4.5 0 0 0 0 9h0.75v6h-1.5a3 3 0 0 1-3-3a0.75 0.75 0 1 0-1.5 0a4.5 4.5 0 0 0 4.5 4.5h1.5v1.5a0.75 0.75 0 1 0 1.5 0v-1.5h1.5a4.5 4.5 0 1 0 0-9zm-3.75 0a3 3 0 0 1 0-6h0.75v6H10.5zm3.75 7.5h-1.5v-6h1.5a3 3 0 0 1 0 6z"
+                />
+              </svg>
+              <span>Payments</span>
+            </div></a
+          >
+          <a href="wallet.html">
+            <div class="nav-item inactive">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M20.25 6h-15a0.75 0.75 0 0 1 0-1.5H18A0.75 0.75 0 1 0 18 3H5.25A2.25 2.25 0 0 0 3 5.25v12a2.25 2.25 0 0 0 2.25 2.25h15a1.5 1.5 0 0 0 1.5-1.5V7.5a1.5 1.5 0 0 0-1.5-1.5zm0 12h-15a0.75 0.75 0 0 1-0.75-0.75V7.37C4.74 7.46 5 7.5 5.25 7.5h15V18zm-4.5-5.63a1.13 1.13 0 1 1 2.25 0a1.13 1.13 0 0 1-2.25 0z"
+                />
+              </svg>
+              <span>Wallet</span>
+            </div>
+          </a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>
