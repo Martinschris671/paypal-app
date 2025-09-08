@@ -342,89 +342,97 @@ body {
   fill: #ffffff;
 }
 
-/* Add perspective to the main container for the 3D effect */
-#mobile-container {
-  perspective: 1000px;
-}
-
-/* --- NEW PREMIUM CARD STYLES --- */
 .card-container {
+  font-family: "PayPal-Open-Regular";
   position: relative;
+  max-width: 400px;
   width: 100%;
-  border-radius: 20px;
-  overflow: hidden;
+  aspect-ratio: 1.586 / 1;
+  background-color: #002991;
   border: 1px solid #f5f4ee;
+  border-radius: 15px;
+  overflow: hidden;
+  color: #ffffff;
   transform-style: preserve-3d;
   transition: transform 0.4s ease, box-shadow 0.4s ease;
-  cursor: pointer;
+  /* A very small, realistic shadow for a light background */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1),
+    inset 0 0 1px 1px rgba(255, 255, 255, 0.08);
 }
+
 .card-container:hover {
-  transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
-  box-shadow: 0 35px 60px rgba(0, 0, 0, 0.5);
+  transform: translateY(-10px) rotateX(5deg) rotateY(2deg);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15),
+    inset 0 0 1px 1px rgba(255, 255, 255, 0.08);
 }
+
 .card-container::before {
   content: "";
   position: absolute;
   top: 0;
   left: -100%;
-  width: 70%;
+  width: 60%;
   height: 100%;
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.15),
     transparent
   );
   transform: skewX(-30deg);
   z-index: 2;
-  transition: left 0.5s ease;
+  transition: left 0.6s ease;
 }
+
 .card-container:hover::before {
-  left: 130%;
+  left: 140%;
 }
-.card-image {
+
+.paypal-logo {
+  position: absolute;
+  top: 6px; /* Negative top pulls it upwards to fill the header */
+  left: 50%;
+  width: 95%; /* Over-sized to create the "fill" effect */
+  z-index: 1; /* Sits below the text */
+  transform: translatex(-50%);
+}
+
+.paypal-logo svg {
   display: block;
-  width: 100%;
-  height: auto;
-  filter: brightness(0.9) contrast(1.2) saturate(1.1);
-  border-radius: 20px;
 }
-.card-overlay-text {
-  color: #ffffff;
-  font-family: "Inter", sans-serif; /* Use the premium font */
+
+.card-element {
+  position: absolute;
+  z-index: 3;
+}
+
+.card-number {
+  font-family: "PayPal-Open-Regular";
+  bottom: 8%;
+  left: 6%;
+  font-size: 1.1rem;
   font-weight: 500;
-  position: absolute;
-  z-index: 1;
-  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.7);
+  letter-spacing: 2px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
-.card-type-label {
+
+.card-info-right {
+  bottom: 5%;
+  right: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.debit-label {
   font-family: "PayPal-Open-Regular";
-  top: 25px;
-  right: 25px;
-  font-size: 16px;
-  font-weight: 600;
-}
-.card-details-bottom-left {
-  font-family: "PayPal-Open-Regular";
-  bottom: 15px;
-  left: 15px;
-  font-size: 15px;
-  letter-spacing: 1.2px;
-  font-weight: bold;
-}
-.contactless-symbol {
-  position: absolute;
-  top: 50%;
-  right: 25px;
-  transform: translateY(-50%);
-  width: 32px;
-  height: 32px;
-  z-index: 1;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
-}
-.contactless-symbol svg path {
-  stroke: #ffffff;
-  stroke-width: 2.2;
-  fill: none;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-bottom: 6px; /* Adjusted space for the larger logo */
   opacity: 0.9;
+}
+
+.mastercard-logo {
+  width: 75px;
+  height: auto;
 }

@@ -62,7 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // --- Card HTML Generation ---
-  // ** THIS IS THE ONLY FUNCTION THAT HAS BEEN MODIFIED **
   const createPremiumCardHTML = (cardDetails) => {
     // This function now returns the complete, realistic PayPal card HTML.
     return `
@@ -73,7 +72,10 @@ document.addEventListener("DOMContentLoaded", () => {
           </svg>
         </div>
         <div class="card-element card-number">
-            <span>.... ${cardDetails.cardNumberLast4}</span>
+            <div class="card-dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+            <span class="last-four">${cardDetails.cardNumberLast4}</span>
         </div>
         <div class="card-element card-info-right">
             <span class="debit-label">Debit</span>
