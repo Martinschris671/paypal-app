@@ -4,626 +4,105 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
     />
-    <title>PayPal</title>
-
+    <title>Loading...</title>
     <style>
-      @font-face {
-        font-family: "PayPal Pro";
-        src: url("fonts/PayPalProSWeb-Book.woff2") format("woff2");
-        font-weight: normal;
-        font-style: normal;
-        font-display: swap;
-      }
-
-      :root {
-        --primary-blue: #0070ba;
-        --icon-blue: #0070ba;
-        --dark-blue-text: #003087;
-        --accent-green: #2ac940;
-        --background-grey: #f5f7fa; /* Minimalist background */
-        --text-primary: #1c1c1c;
-        --text-secondary: #6c7378;
-        --border-color: #e9e9e9;
-        --white: #ffffff;
-        --font-family: "PayPal Pro", -apple-system, BlinkMacSystemFont,
-          sans-serif;
-      }
-
+      /* --- GLOBAL RESET --- */
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
       }
-      html {
-        height: 100%;
-      }
+
+      /* --- PAGE STYLING --- */
+      html,
       body {
-        font-family: var(--font-family);
-        background-color: var(--background-grey);
-        color: var(--text-primary);
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
         height: 100%;
+        width: 100%;
+        overflow: hidden;
+        /* Sets the background color as requested */
+        background-color: #002992;
       }
 
-      .app-container {
-        width: 100%;
-        max-width: 450px;
+      /* --- LOADING CONTAINER --- */
+      /* This container uses Flexbox to perfectly center the logo */
+      #loading-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         height: 100%;
-        display: flex;
-        flex-direction: column;
-        background-color: var(--background-grey);
-        position: relative;
-      }
-
-      .fixed-header {
-        position: fixed;
-        top: 0;
         width: 100%;
-        max-width: 450px;
-        z-index: 100;
-        background-color: var(--background-grey);
-      }
-      .top-nav {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 32px 16px 16px;
-      }
-      .icon-btn {
-        width: 40px;
-        height: 40px;
-        background: white;
-        border: none;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        cursor: pointer;
-      }
-      .icon-btn img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      #user-profile-btn img {
-        color: var(--icon-blue);
       }
 
-      main {
-        padding-top: 56px;
-        padding-bottom: 85px;
-        overflow-y: auto;
-        flex-grow: 1;
-        -webkit-overflow-scrolling: touch;
+      /* --- LOGO STYLING & ANIMATION --- */
+      .loading-logo {
+        width: 110px; /* Adjust the size of the logo as needed */
+        height: 110px;
+        /* A subtle "breathing" animation to show that something is happening */
+        animation: logo-pulse 2s infinite ease-in-out;
       }
 
-      /* Balance Card */
-      .balance-card-wrapper {
-        padding: 16px;
-        margin: 20px 16px 24px;
-      }
-      .balance-card {
-        background: white;
-        border-radius: 16px;
-        padding: 16px;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-      .balance-details {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        min-width: 0;
-      }
-      .paypal-logo {
-        width: 32px;
-        height: 32px;
-        flex-shrink: 0;
-      }
-
-      .balance-text .balance-amount {
-        font-size: 24px; /* CORRECTED: Smaller size */
-        font-weight: 900; /* CORRECTED: Extra-bold */
-        color: var(--text-primary);
-        letter-spacing: -0.5px;
-        white-space: nowrap;
-        transition: font-size 0.2s ease-out;
-      }
-      .balance-text .balance-label {
-        font-size: 14px;
-        color: var(--text-secondary);
-        font-weight: 600;
-      }
-
-      /* Send Again Section */
-      .send-again-section {
-        padding: 16px;
-      }
-      .section-title {
-        font-size: 20px;
-        font-weight: 700;
-        margin-bottom: 20px;
-        padding-left: 4px;
-      }
-      .contacts-carousel {
-        display: flex;
-        gap: 24px;
-        overflow-x: auto;
-        padding: 0 4px 10px 4px;
-        scrollbar-width: none;
-      }
-      .contacts-carousel::-webkit-scrollbar {
-        display: none;
-      }
-      .contact-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-width: 80px;
-        text-align: center;
-        text-decoration: none;
-        color: var(--text-primary);
-        transition: transform 0.2s ease-out; /* For hover effect */
-      }
-      .contact-item:hover {
-        transform: scale(1.05); /* CORRECTED: Scale up effect */
-      }
-      .contact-avatar {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 22px;
-        font-weight: 600;
-        color: var(--white);
-        margin-bottom: 12px;
-        text-transform: uppercase;
-        object-fit: cover;
-        background-size: cover;
-        background-position: center;
-      }
-      .contact-avatar.initials-avatar-dark {
-        background-color: var(--dark-blue-text);
-      }
-      .contact-avatar.initials-avatar-light {
-        background-color: #4a90e2;
-      }
-      .contact-avatar.search-icon {
-        background-color: #000;
-      }
-      .contact-avatar.search-icon img {
-        width: 30px;
-        height: 30px;
-      }
-      .contact-name {
-        font-size: 14px;
-        font-weight: 600;
-        line-height: 1.3;
-      }
-
-      /* Transaction History */
-      .history-section {
-        padding: 0 16px 16px 16px;
-      }
-      .history-card {
-        background: var(--white);
-        border-radius: 16px;
-        padding: 0;
-      }
-      .transaction-item {
-        display: flex;
-        align-items: flex-end;
-        padding: 20px 16px;
-        border-bottom: 1px solid var(--border-color);
-      }
-      .transaction-item:last-child {
-        border-bottom: none;
-      }
-      .tx-avatar-group {
-        text-align: center;
-        flex-shrink: 0;
-        width: 70px;
-      }
-      .tx-avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        display: flex;
-        margin: 0 auto;
-        justify-content: center;
-        align-items: center;
-        font-size: 18px;
-        font-weight: 500;
-        color: var(--white);
-        text-transform: uppercase;
-        object-fit: cover;
-        background-color: var(--dark-blue-text);
-        background-size: cover;
-        background-position: center;
-      }
-      .tx-status-under-avatar {
-        font-size: 12px;
-        color: var(--text-secondary);
-        margin-top: 6px;
-        font-weight: 600;
-        white-space: nowrap;
-      }
-      .tx-main-content {
-        flex-grow: 1;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        margin-left: 12px;
-      }
-      .tx-details {
-        transform: translateY(-24px);
-      }
-      .tx-name {
-        font-size: 16px;
-        font-weight: 700;
-      }
-      .tx-date {
-        font-size: 14px;
-        color: var(--text-secondary);
-        font-weight: 600;
-      }
-      .tx-amount {
-        font-size: 14px;
-        font-weight: 700;
-        white-space: nowrap;
-      }
-      .tx-amount.received {
-        color: var(--accent-green);
-      }
-      .tx-amount.sent {
-        color: var(--text-primary);
-      }
-
-      /* Empty State */
-      .empty-state {
-        text-align: center;
-        padding: 50px 20px;
-      }
-      .empty-state img {
-        width: 60px;
-        height: 60px;
-        margin-bottom: 16px;
-        opacity: 0.5;
-      }
-      .empty-state p {
-        font-size: 16px;
-        font-weight: 600;
-        color: var(--text-secondary);
-      }
-
-      /* Footer */
-      .fixed-footer {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        max-width: 450px;
-        z-index: 100;
-      }
-      .bottom-nav {
-        background-color: var(--white);
-        border-top: 1px solid #ddd;
-        display: flex;
-        justify-content: space-around;
-        height: 85px;
-        padding-bottom: env(safe-area-inset-bottom);
-        align-items: center;
-      }
-      .nav-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-decoration: none;
-        font-size: 12px;
-        font-weight: 600;
-        gap: 4px;
-        color: var(--text-secondary);
-      }
-      .nav-item.active {
-        color: var(--text-primary);
-      }
-      .nav-item img {
-        width: 24px;
-        height: 24px;
-      }
-      .nav-item-send .send-icon-wrapper {
-        width: 48px;
-        height: 48px;
-        background-color: var(--primary-blue);
-        border-radius: 50%;
-        color: var(--white);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 2px;
-      }
-      .nav-item-send .send-icon-wrapper img {
-        filter: brightness(0) invert(1);
-        width: 22px;
-        height: 22px;
+      /* Defines the pulsing animation */
+      @keyframes logo-pulse {
+        0% {
+          transform: scale(1);
+          opacity: 0.8;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 0.8;
+        }
       }
     </style>
   </head>
   <body>
-    <!-- CORRECTED: Static HTML structure -->
-    <div class="app-container">
-      <header class="fixed-header">
-        <nav class="top-nav">
-          <button class="icon-btn" id="menu-btn">
-            <img src="icons/menu.svg" alt="Menu" />
-          </button>
-          <a href="profile.html" class="icon-btn" id="user-profile-btn">
-            <!-- This will be populated by JS -->
-          </a>
-        </nav>
-      </header>
-
-      <main>
-        <div class="balance-card-wrapper">
-          <div class="balance-card">
-            <div class="balance-details">
-              <img
-                src="icons/paypal-logo.svg"
-                alt="PayPal Logo"
-                class="paypal-logo"
-              />
-              <div class="balance-text">
-                <div id="balance-amount" class="balance-amount"></div>
-                <div class="balance-label">PayPal balance</div>
-              </div>
-            </div>
-            <!-- Add Money Button Removed -->
-          </div>
-        </div>
-
-        <section class="send-again-section">
-          <h2 class="section-title">Send again</h2>
-          <div id="contacts-carousel" class="contacts-carousel">
-            <!-- Contacts will be rendered here by JS -->
-          </div>
-        </section>
-
-        <section id="history-section" class="history-section">
-          <!-- Transaction history will be rendered here by JS -->
-        </section>
-      </main>
-
-      <footer class="fixed-footer">
-        <nav class="bottom-nav">
-          <a href="index.html" class="nav-item active">
-            <img src="icons/home.svg" alt="Home" />
-            Home
-          </a>
-          <a href="send.html" class="nav-item nav-item-send">
-            <div class="send-icon-wrapper">
-              <img src="icons/send.svg" alt="Send/Request" />
-            </div>
-            <span>Send/Request</span>
-          </a>
-          <a href="#" class="nav-item">
-            <img src="icons/wallet.svg" alt="Wallet" />
-            Wallet
-          </a>
-        </nav>
-      </footer>
+    <!-- The only content on the page is the centered logo -->
+    <div id="loading-container">
+      <div class="loading-logo">
+        <!-- The SVG logo you provided -->
+        <svg
+          id="vector"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 48.0 48.0"
+        >
+          <g id="g_0">
+            <path
+              fill="#b6c4e7"
+              d="M38.91 13.35c0 5.57-5.14 12.15-12.92 12.15h-7.5l-0.37 2.32L16.37 39H7.06l5.6-36h15.1c5.08 0 9.08 2.83 10.55 6.77a9.69 9.69 0 0 1 0.6 3.58z"
+            />
+            <path
+              fill="#ffffff"
+              d="M44.28 23.7a12.9 12.9 0 0 1-12.75 10.8h-5.2L24.15 48h-9.27l1.48-9l1.75-11.18l0.37-2.32h7.5c7.77 0 12.92-6.58 12.92-12.15c3.83 1.97 6.06 5.96 5.37 10.35z"
+            />
+            <path
+              fill="#e9edf8"
+              d="M38.91 13.35c-1.6-0.84-3.54-1.35-5.66-1.35H20.6l-2.12 13.5h7.5c7.77 0 12.92-6.58 12.92-12.15z"
+            />
+          </g>
+        </svg>
+      </div>
     </div>
 
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const AppDB = {
-          get: (key, def = null) =>
-            JSON.parse(localStorage.getItem(key)) || def,
-          set: (key, val) => localStorage.setItem(key, JSON.stringify(val)),
-        };
+      // --- REDIRECTION LOGIC ---
 
-        function initializeData() {
-          if (AppDB.get("app_initialized_v8")) return;
+      // The URL of the page to redirect to.
+      const nextPageUrl = "home.html";
 
-          AppDB.set("userProfile", { pfp: null }); // Default: no specific pfp
-          AppDB.set("balance", 0.0);
+      // The delay in milliseconds (5 seconds = 5000 ms).
+      const delayInMilliseconds = 5000;
 
-          // Start with no contacts or transactions to show the empty states
-          AppDB.set("contacts", []);
-          AppDB.set("transactions", []);
-
-          AppDB.set("app_initialized_v8", true);
-        }
-
-        const formatCurrency = (amount, currency, addSign = false) => {
-          const options = {
-            style: "decimal",
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          };
-          const formattedAmount = Math.abs(amount).toLocaleString(
-            "en-US",
-            options
-          );
-          const sign = addSign ? (amount >= 0 ? "+" : "-") : "";
-          return `${sign}${formattedAmount} US $`; // CORRECTED: Space added
-        };
-
-        const formatAdvancedTimestamp = (timestamp) => {
-          const now = new Date();
-          const txDate = new Date(timestamp);
-          const diffSeconds = (now - txDate) / 1000;
-          const diffDays = Math.floor(diffSeconds / 86400);
-
-          if (diffDays === 0)
-            return txDate
-              .toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "2-digit",
-              })
-              .replace(" ", "");
-          if (diffDays === 1) return "Yesterday";
-          if (diffDays < 7)
-            return txDate.toLocaleDateString("en-US", { weekday: "short" });
-          return txDate.toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-          });
-        };
-
-        const getInitials = (name) => {
-          if (!name) return "";
-          const words = name.trim().split(" ");
-          return words.length > 1
-            ? `${words[0][0]}${words[1][0]}`
-            : name.substring(0, 2);
-        };
-
-        function renderUserProfile() {
-          const profile = AppDB.get("userProfile");
-          const btn = document.getElementById("user-profile-btn");
-          if (profile && profile.pfp) {
-            btn.innerHTML = `<img src="${profile.pfp}" alt="Profile Picture" style="width: 100%; height: 100%; border-radius: 50%;">`;
-          } else {
-            btn.innerHTML = `<img src="icons/" alt="Profile">`;
-          }
-        }
-
-        function renderBalance(balance) {
-          const balanceEl = document.getElementById("balance-amount");
-          balanceEl.textContent = formatCurrency(balance, ""); // Currency symbol removed from here
-        }
-
-        function activateDynamicBalanceFont() {
-          const balanceDetails = document.querySelector(".balance-details");
-          const balanceAmount = document.getElementById("balance-amount");
-
-          const observer = new ResizeObserver(() => {
-            const parentWidth = balanceDetails.clientWidth - 48; // Parent width minus logo and gap
-            balanceAmount.style.fontSize = "";
-            let currentFontSize = parseFloat(
-              window.getComputedStyle(balanceAmount).fontSize
-            );
-            while (
-              balanceAmount.scrollWidth > parentWidth &&
-              currentFontSize > 12
-            ) {
-              currentFontSize -= 1;
-              balanceAmount.style.fontSize = `${currentFontSize}px`;
-            }
-          });
-          if (balanceDetails) observer.observe(balanceDetails);
-        }
-
-        function renderContacts() {
-          const contacts = AppDB.get("contacts", []);
-          const carousel = document.getElementById("contacts-carousel");
-          let carouselHTML = "";
-
-          contacts.forEach((c) => {
-            const pfpStyle = c.pfp ? `background-image: url('${c.pfp}')` : "";
-            const initials = c.pfp ? "" : getInitials(c.name);
-            const colorClass = c.pfp
-              ? ""
-              : c.initialsColor === "light"
-              ? "initials-avatar-light"
-              : "initials-avatar-dark";
-
-            carouselHTML += `
-                    <a href="send.html?contactId=${c.id}" class="contact-item">
-                        <div class="contact-avatar ${colorClass}" style="${pfpStyle}">${initials}</div>
-                        <div class="contact-name">${c.name}</div>
-                    </a>`;
-          });
-
-          // CORRECTED: Always add the search icon at the end
-          carouselHTML += `
-                <a href="search.html" class="contact-item">
-                    <div class="contact-avatar search-icon">
-                        <img src="icons/icons8-search-192.png" alt="Search">
-                    </div>
-                    <div class="contact-name">Search</div>
-                </a>`;
-
-          carousel.innerHTML = carouselHTML;
-        }
-
-        function renderHistory() {
-          const transactions = AppDB.get("transactions", []);
-          const historySection = document.getElementById("history-section");
-
-          // CORRECTED: Ultra-realistic empty state
-          if (transactions.length === 0) {
-            historySection.innerHTML = `
-                    <div class="empty-state">
-                        <img src="icons/receipt-bold-svgrepo-com.png" alt="No transactions">
-                        <p>No transactions yet</p>
-                    </div>`;
-            return;
-          }
-
-          const contacts = AppDB.get("contacts", []);
-          let historyHTML = "";
-          transactions
-            .sort((a, b) => b.timestamp - a.timestamp)
-            .forEach((tx) => {
-              const contact = tx.contactId
-                ? contacts.find((c) => c.id === tx.contactId)
-                : null;
-              const name = contact ? contact.name : tx.source || "Unknown";
-              const pfp = contact ? contact.pfp : null;
-              const initials = getInitials(name);
-              const amount = tx.type === "received" ? tx.amount : -tx.amount;
-              const amountClass = tx.type === "received" ? "received" : "sent";
-              const statusText =
-                tx.type === "received" ? "Money received" : "Money sent";
-              const pfpStyle = pfp ? `background-image: url('${pfp}')` : "";
-
-              historyHTML += `
-                    <div class="transaction-item">
-                        <div class="tx-avatar-group">
-                            <div class="tx-avatar" style="${pfpStyle}">${
-                pfp ? "" : initials
-              }</div>
-                            <div class="tx-status-under-avatar">${statusText}</div>
-                        </div>
-                        <div class="tx-main-content">
-                            <div class="tx-details">
-                                <div class="tx-name">${name}</div>
-                                <div class="tx-date">${formatAdvancedTimestamp(
-                                  tx.timestamp
-                                )}</div>
-                            </div>
-                            <div class="tx-amount ${amountClass}">${formatCurrency(
-                amount,
-                "US $",
-                true
-              )}</div>
-                        </div>
-                    </div>`;
-            });
-          historySection.innerHTML = `<div class="history-card">${historyHTML}</div>`;
-        }
-
-        function run() {
-          initializeData();
-          renderUserProfile();
-          renderBalance(AppDB.get("balance", 0));
-          renderContacts();
-          renderHistory();
-          activateDynamicBalanceFont();
-        }
-
-        run();
-      });
+      // After the specified delay, this function will run.
+      setTimeout(() => {
+        // window.location.replace() is used so the user cannot press the
+        // 'back' button to return to this loading screen.
+        window.location.replace(nextPageUrl);
+      }, delayInMilliseconds);
     </script>
   </body>
 </html>
