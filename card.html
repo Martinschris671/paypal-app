@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ultra-Realistic Premium Card</title>
-    <!-- 1. Import a premium, clean font from Google Fonts -->
+    <title>Ultra-Realistic PayPal Card</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -14,10 +13,9 @@
 
     <style>
       body {
-        /* Use the new font */
         font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
           Roboto, Helvetica, Arial, sans-serif;
-        background-color: #ffffff; /* Dark background to make the card stand out */
+        background-color: #ffffff; /* Dark background to make the 3D effect pop */
         display: flex;
         justify-content: center;
         align-items: center;
@@ -25,223 +23,155 @@
         padding: 24px;
         margin: 0;
         /* This sets up the 3D space for the card's perspective effect */
-        perspective: 1000px;
+        perspective: 1200px;
       }
 
       /* 
-        2. The main container with 3D properties and a hover transition.
+        1. The main card container with 3D properties.
         */
       .card-container {
         position: relative;
         max-width: 400px;
         width: 100%;
-        border-radius: 20px; /* Slightly larger radius for a softer, premium look */
+        aspect-ratio: 1.586 / 1;
+        background-color: #002991;
+        border: 1px solid #f5f4ee;
+        border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        /* This enables 3D transformations for child elements */
+        color: #ffffff;
+        /* Enables 3D transformations for child elements */
         transform-style: preserve-3d;
         /* Smooth transition for the hover effect */
         transition: transform 0.4s ease, box-shadow 0.4s ease;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
+          inset 0 0 1px 1px rgba(255, 255, 255, 0.08);
       }
 
-      /* 3. The interactive hover effect that makes the card "lift" and tilt */
+      /* 2. The interactive hover effect that makes the card "lift" and tilt */
       .card-container:hover {
-        transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
-        box-shadow: 0 35px 60px rgba(0, 0, 0, 0.5);
+        transform: translateY(-15px) rotateX(8deg) rotateY(3deg);
+        box-shadow: 0 40px 60px rgba(0, 0, 0, 0.5),
+          inset 0 0 1px 1px rgba(255, 255, 255, 0.08);
       }
 
       /* 
-        4. The realistic glare effect using a pseudo-element.
-           This sits on top of the card image.
+        3. The realistic glare effect using a pseudo-element.
         */
       .card-container::before {
         content: "";
         position: absolute;
         top: 0;
         left: -100%; /* Start off-screen */
-        width: 70%;
+        width: 60%;
         height: 100%;
         background: linear-gradient(
           90deg,
           transparent,
-          rgba(255, 255, 255, 0.2),
+          rgba(255, 255, 255, 0.15),
           transparent
         );
         transform: skewX(-30deg);
-        z-index: 2;
-        transition: left 0.5s ease;
+        z-index: 2; /* Sits above the background but below the text */
+        transition: left 0.6s ease;
       }
 
       /* The glare moves across the card on hover */
       .card-container:hover::before {
-        left: 130%;
+        left: 140%;
       }
 
       /* 
-        5. The card image is enhanced with CSS filters.
+        4. PayPal Logo: Resized and repositioned to fill the header.
         */
-      .card-image {
+      .paypal-logo {
+        position: absolute;
+        top: 6px; /* Negative top pulls it upwards to fill the header */
+        left: 50%;
+        width: 95%; /* Over-sized to create the "fill" effect */
+        z-index: 1; /* Sits below the text */
+        transform: translatex(-50%);
+      }
+
+      .paypal-logo svg {
+        /* Fixes a potential SVG alignment issue */
         display: block;
-        width: 100%;
-        height: auto;
-        /* Filters to make the image more vibrant and premium */
-        filter: brightness(0.9) contrast(1.2) saturate(1.1);
-        border-radius: 20px;
       }
 
-      /* A common container for all text overlays */
-      .card-overlay-text {
-        color: #ffffff;
+      /* All other elements need a higher z-index to appear above the glare and logo */
+      .card-element {
+        position: absolute;
+        z-index: 3;
+      }
+
+      /* 
+        5. Card Number Placement.
+        */
+      .card-number {
+        bottom: 5%;
+        left: 8%;
+        font-size: 1.1rem;
         font-weight: 500;
-        position: absolute;
-        z-index: 1;
-        /* 6. Realistic embossed text effect */
-        text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.7);
+        letter-spacing: 2px;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
       }
 
-      /* 7. Specific positioning for the "Debit" label */
-      .card-type-label {
-        top: 25px;
-        right: 25px;
-        font-size: 16px;
-        font-weight: 600;
+      /*
+        6. Container for the items on the bottom-right.
+        */
+      .card-info-right {
+        bottom: 5%;
+        right: 8%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
       }
 
-      /* 8. Specific positioning for the card number */
-      .card-details-bottom-left {
-        bottom: 25px;
-        left: 25px;
-        font-size: 18px;
-        letter-spacing: 1.5px;
-      }
-
-      /* 9. Contactless symbol styling */
-      .contactless-symbol {
-        position: absolute;
-        top: 50%;
-        right: 25px;
-        transform: translateY(-50%);
-        width: 32px;
-        height: 32px;
-        z-index: 1;
-        filter: drop-shadow(
-          0 1px 1px rgba(0, 0, 0, 0.5)
-        ); /* Adds a shadow to the icon itself */
-      }
-
-      .contactless-symbol svg path {
-        stroke: #ffffff;
-        stroke-width: 2.2;
-        fill: none;
+      .debit-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        margin-bottom: 4px;
         opacity: 0.9;
       }
-      /* --- NEW PREMIUM CARD STYLES --- */
-.card-container {
-  position: relative;
-  width: 100%;
-  border-radius: 21px;
-  overflow: hidden;
-  border: 1px solid #f5f4ee;
-  transform-style: preserve-3d;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-  cursor: pointer;
-}
-.card-container:hover {
-  transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
-  box-shadow: 0 35px 60px rgba(0, 0, 0, 0.5);
-}
-.card-container::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 70%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
-  transform: skewX(-30deg);
-  z-index: 2;
-  transition: left 0.5s ease;
-}
-.card-container:hover::before {
-  left: 130%;
-}
-.card-image {
-  display: block;
-  width: 100%;
-  height: auto;
-  filter: brightness(0.9) contrast(1.2) saturate(1.1);
-  border-radius: 20px;
-}
-.card-overlay-text {
-  color: #ffffff;
-  font-family: "Inter", sans-serif; /* Use the premium font */
-  font-weight: 500;
-  position: absolute;
-  z-index: 1;
-  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.7);
-}
-.card-type-label {
-  font-family: "PayPal-Open-Regular";
-  top: 25px;
-  right: 25px;
-  font-size: 16px;
-  font-weight: 600;
-}
-.card-details-bottom-left {
-  font-family: "PayPal-Open-Regular";
-  bottom: 15px;
-  left: 15px;
-  font-size: 15px;
-  letter-spacing: 1.2px;
-  font-weight: bold;
-}
-.contactless-symbol {
-  position: absolute;
-  top: 50%;
-  right: 25px;
-  transform: translateY(-50%);
-  width: 32px;
-  height: 32px;
-  z-index: 1;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
-}
-.contactless-symbol svg path {
-  stroke: #ffffff;
-  stroke-width: 2.2;
-  fill: none;
-  opacity: 0.9;
-}
 
+      .mastercard-logo {
+        width: 60px;
+        height: auto;
+      }
     </style>
   </head>
   <body>
-    <!-- The HTML structure remains clean and simple -->
     <div class="card-container">
-      <img
-        class="card-image"
-        src="icons/RainbowPreview_a7dab183-2a60-4bb0-acc5-592919b10135.jpg"
-        alt="Premium Card Image"
-      />
-
-      <span class="card-overlay-text card-type-label">Debit</span>
-
-      <div class="card-overlay-text card-details-bottom-left">
-        <span>&bull;&bull; 8122</span>
-      </div>
-
-      <div class="contactless-symbol">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div class="paypal-logo">
+        <svg viewBox="0 0 135.0 48.0" xmlns="http://www.w3.org/2000/svg">
           <path
-            d="M16.3 19.5002C17.4 17.2002 18 14.7002 18 12.0002C18 9.30024 17.4 6.70024 16.3 4.50024M12.7 17.8003C13.5 16.0003 14 14.0003 14 12.0003C14 10.0003 13.5 7.90034 12.7 6.10034M9.1001 16.1001C9.7001 14.8001 10.0001 13.4001 10.0001 12.0001C10.0001 10.6001 9.7001 9.10015 9.1001 7.90015M5.5 14.3003C5.8 13.6003 6 12.8003 6 12.0003C6 11.2003 5.8 10.3003 5.5 9.60034"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            fill="#60cdff"
+            d="M18.24 2.83C16.85 2.28 15.17 2 13.2 2H2v32.88h7.6V23.72h3.6c1.97 0 3.65-0.28 5.04-0.83c1.39-0.55 2.57-1.32 3.52-2.31a11.15 11.15 0 0 0 2.3-3.49c0.55-1.31 0.82-2.72 0.82-4.23c0-1.51-0.27-2.92-0.82-4.23c-0.55-1.31-1.32-2.47-2.3-3.49c-0.96-0.99-2.13-1.76-3.52-2.31zm-3.77 13.82c-0.56 0.21-1.33 0.31-2.35 0.31H9.6v-8.2h2.52c1.02 0 1.8 0.12 2.35 0.35c0.58 0.2 1.05 0.48 1.43 0.83c0.78 0.73 1.17 1.7 1.17 2.92s-0.39 2.19-1.17 2.92c-0.37 0.34-0.85 0.64-1.43 0.87zM88.17 2c1.97 0 3.65 0.28 5.04 0.83c1.39 0.55 2.56 1.32 3.52 2.31c0.98 1.02 1.75 2.18 2.3 3.49c0.55 1.31 0.82 2.72 0.82 4.23c0 1.51-0.27 2.92-0.82 4.23a11.15 11.15 0 0 1-2.3 3.49c-0.95 0.99-2.13 1.76-3.52 2.31c-1.39 0.55-3.07 0.83-5.04 0.83h-3.6v11.16h-7.6V2h11.2zm-1.09 14.96c1.02 0 1.79-0.1 2.35-0.31c0.58-0.23 1.06-0.53 1.43-0.87c0.78-0.73 1.17-1.7 1.17-2.92s-0.39-2.19-1.17-2.92c-0.38-0.35-0.85-0.63-1.43-0.83c-0.55-0.23-1.33-0.35-2.35-0.35h-2.52v8.2h2.52zM133 34.83V2h-7.47v32.83H133zm-10.22 0.06V13.1h-6.64v1.88a8.77 8.77 0 0 0-2.86-1.88c-1.07-0.47-2.23-0.7-3.47-0.7c-1.56 0-3.01 0.31-4.34 0.92a10.45 10.45 0 0 0-3.47 2.44c-0.99 1.05-1.77 2.29-2.35 3.71c-0.55 1.39-0.82 2.9-0.82 4.53c0 1.63 0.27 3.16 0.82 4.58c0.58 1.39 1.36 2.61 2.35 3.66c0.98 1.04 2.14 1.87 3.47 2.48c1.33 0.58 2.78 0.87 4.34 0.87c1.24 0 2.4-0.24 3.47-0.7a8.99 8.99 0 0 0 2.86-1.88v1.88h6.64zm-8.43-7.34c-0.87 0.94-1.98 1.4-3.34 1.4c-1.36 0-2.49-0.47-3.39-1.4c-0.86-0.92-1.3-2.12-1.3-3.57c0-1.45 0.43-2.64 1.3-3.57c0.9-0.94 2.04-1.4 3.39-1.4s2.47 0.47 3.34 1.4c0.9 0.92 1.35 2.12 1.35 3.57c0 1.45-0.45 2.64-1.35 3.57zM57.22 13.08h-8.25l10.07 17.84l-7.47 15.04h7.6l16.37-32.88H67.9l-4.99 10.46h-0.09l-5.6-10.46zM47.5 13.1v21.79h-6.64v-1.88c-0.84 0.82-1.8 1.44-2.86 1.88c-1.07 0.46-2.23 0.7-3.47 0.7c-1.56 0-3.01-0.29-4.34-0.87c-1.33-0.61-2.49-1.44-3.47-2.48c-0.98-1.05-1.77-2.27-2.35-3.66c-0.55-1.42-0.82-2.95-0.82-4.58s0.27-3.14 0.82-4.53c0.58-1.42 1.36-2.66 2.35-3.71a10.35 10.35 0 0 1 3.47-2.44c1.33-0.61 2.78-0.92 4.34-0.92c1.24 0 2.4 0.23 3.47 0.7c1.07 0.44 2.03 1.06 2.86 1.88V13.1h6.64zM35.73 28.95c1.36 0 2.47-0.46 3.35-1.4c0.9-0.93 1.35-2.12 1.35-3.57c0-1.45-0.45-2.65-1.35-3.57c-0.87-0.93-1.99-1.4-3.35-1.4s-2.49 0.46-3.39 1.4c-0.87 0.93-1.3 2.12-1.3 3.57c0 1.45 0.44 2.65 1.3 3.57c0.9 0.93 2.03 1.4 3.39 1.4z"
           />
         </svg>
+      </div>
+
+      <div class="card-element card-number">
+        <span>.... 6645</span>
+      </div>
+
+      <div class="card-element card-info-right">
+        <span class="debit-label">Debit</span>
+        <div class="mastercard-logo">
+          <svg viewBox="0 0 564.51 349.81" xmlns="http://www.w3.org/2000/svg">
+            <path
+              fill="#f79f1a"
+              d="M564.51,174.9c0,96.6 -78.16,174.91 -174.58,174.91S215.36,271.5 215.36,174.9 293.52,0 389.93,0 564.51,78.31 564.51,174.9Z"
+            />
+            <path
+              fill="#ea001b"
+              d="M349.15,174.9c0,96.6 -78.16,174.91 -174.58,174.91S0,271.5 0,174.9 78.16,0 174.57,0 349.15,78.31 349.15,174.9Z"
+            />
+            <path
+              fill="#ff5f01"
+              d="M282.25,37.22a175.18,175.18 0,0 0,0 275.37,175.17 175.17,0 0,0 0,-275.37Z"
+            />
+          </svg>
+        </div>
       </div>
     </div>
   </body>
