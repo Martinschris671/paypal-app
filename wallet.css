@@ -1,0 +1,348 @@
+/* CSS from the next block goes here */
+/* --- FONT DEFINITIONS --- */
+@font-face {
+  font-family: "PayPal-Sans-Black";
+  src: url("fonts/pay_pal_pro_black.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: "PayPal-Open-Regular";
+  src: url("fonts/pay_pal_open_regular.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* --- GLOBAL STYLES --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: "PayPal-Open-Regular", -apple-system, sans-serif;
+  background-color: #f6f7f9;
+  color: #000000;
+}
+.placeholder-content {
+  padding: 24px;
+  font-size: 1.5rem;
+}
+
+/* --- MODAL BACKDROP --- */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 998;
+}
+.modal-backdrop.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* --- GENERAL MODAL STYLES --- */
+.modal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: 448px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  z-index: 999;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  display: flex;
+  flex-direction: column;
+}
+.modal.visible {
+  transform: translateY(0);
+}
+
+/* --- "ADD TO WALLET" MODAL --- */
+#modal-add-to-wallet {
+  border-radius: 24px 24px 0 0;
+  padding: 16px;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  margin-bottom: 16px;
+}
+.modal-title {
+  font-family: "PayPal-Sans-Black", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+.modal-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.modal-close-btn svg {
+  width: 24px;
+  height: 24px;
+}
+.wallet-option-list {
+  padding: 0 8px 16px;
+}
+.wallet-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 0;
+  cursor: pointer;
+}
+.wallet-option-icon {
+  flex-shrink: 0;
+}
+.wallet-option-icon svg {
+  width: 28px;
+  height: 28px;
+}
+.wallet-option-text .title {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+.wallet-option-text .subtitle {
+  font-size: 0.9rem;
+  color: #545d68;
+  line-height: 1.4;
+}
+
+/* --- "LINK A CARD" MODAL --- STYLES UPDATED HERE --- */
+#modal-link-card {
+  border-radius: 24px 24px 0 0;
+  max-height: 90vh;
+}
+
+/* 1. Header uses flexbox to position buttons and is relative for title centering */
+#modal-link-card .modal-header {
+  display: flex;
+  justify-content: space-between; /* This pushes the buttons to the edges */
+  align-items: center;
+  position: relative; /* This is the anchor for the absolute title */
+  padding: 16px;
+  margin-bottom: 8px;
+}
+
+/* 2. Title is perfectly centered using absolute positioning */
+#modal-link-card .modal-title {
+  font-family: "PayPal-Open-Regular", -apple-system, sans-serif; /* Use a standard font */
+  font-size: 1rem;
+  font-weight: 500; /* Regular weight */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* 3. Button-specific styles are removed as Flexbox handles the layout */
+#modal-link-card .modal-back-btn {
+  /* No absolute positioning needed */
+}
+#modal-link-card .modal-close-btn {
+  /* No absolute positioning needed */
+}
+/* --- END OF HEADER STYLE UPDATES --- */
+
+.modal-content {
+  padding: 0 24px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+.form-action-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+.scan-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #0070ba;
+  font-weight: 600;
+  cursor: pointer;
+}
+.scan-button svg {
+  width: 24px;
+  height: 24px;
+}
+.scan-button svg path {
+  fill: #0070ba;
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 16px;
+}
+.input-field {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #c4c4c4;
+  border-radius: 12px;
+  font-family: "PayPal-Open-Regular", sans-serif;
+  font-size: 1rem;
+  outline: none;
+}
+.input-field:focus {
+  border-color: #0070ba;
+}
+.input-with-icon-left {
+  padding-left: 50px;
+}
+.input-icon-left {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.input-icon-left svg {
+  width: 24px;
+  height: 24px;
+  transform: translateY(-50%);
+  top: -50%;
+}
+.input-action-right {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.input-action-right svg {
+  width: 24px;
+  height: 24px;
+  transform: translateY(-50%);
+  top: -50%;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+.form-row .form-group {
+  flex: 1;
+}
+.billing-section {
+  margin-top: 32px;
+  padding-bottom: 16px;
+}
+.billing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.billing-title {
+  font-weight: 700;
+}
+.change-link {
+  color: #0070ba;
+  font-weight: 600;
+  cursor: pointer;
+}
+.address-block {
+  font-size: 1rem;
+  color: #545d68;
+  line-height: 1.5;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  margin-top: auto;
+  flex-shrink: 0;
+  border-top: 1px solid #f0f0f0;
+}
+.primary-btn {
+  width: 100%;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  padding: 16px;
+  font-family: "PayPal-Open-Regular", sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 30px;
+  cursor: pointer;
+}
+/* --- NEW "FEATURE NOT IMPLEMENTED" MODAL STYLES --- */
+#modal-feature-not-implemented {
+  border-radius: 24px 24px 0 0;
+  padding: 16px;
+}
+.feature-not-implemented-content {
+  padding: 40px 24px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* --- NEW VALIDATION STYLES --- */
+.input-field.input-error {
+  border-color: #d70000; /* Red border for invalid fields */
+}
+
+.error-message {
+  color: #d70000;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  padding-left: 4px;
+  height: 1.2em; /* Reserve space to prevent layout shift */
+}
+
+/* --- TOAST STYLES FOR SUCCESS MESSAGE --- */
+.toast {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  transform: translateY(-150%);
+  background-color: #2c2e2f;
+  color: #ffffff;
+  padding: 14px 16px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  z-index: 1000;
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  max-width: calc(448px - 32px);
+  margin: 0 auto;
+}
+.toast.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+.toast svg {
+  width: 20px;
+  height: 20px;
+}
+.toast svg path {
+  fill: #ffffff;
+}
+
+/* Add perspective to the main container for the 3D effect */
+#mobile-container {
+  perspective: 1000px;
+}

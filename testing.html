@@ -307,10 +307,40 @@
         font-size: 0.8rem;
         margin-top: 4px;
         padding-left: 4px;
-        display: none; /* Hidden by default */
+        height: 1.2em; /* Reserve space to prevent layout shift */
       }
-      .error-message.visible {
-        display: block; /* Shown when there is an error */
+
+      /* --- TOAST STYLES FOR SUCCESS MESSAGE --- */
+      .toast {
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        right: 16px;
+        transform: translateY(-150%);
+        background-color: #2c2e2f;
+        color: #ffffff;
+        padding: 14px 16px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.9rem;
+        z-index: 1000;
+        opacity: 0;
+        transition: transform 0.4s ease, opacity 0.4s ease;
+        max-width: calc(448px - 32px);
+        margin: 0 auto;
+      }
+      .toast.visible {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .toast svg {
+        width: 20px;
+        height: 20px;
+      }
+      .toast svg path {
+        fill: #ffffff;
       }
     </style>
   </head>
@@ -368,7 +398,7 @@
       </div>
     </div>
 
-    <!-- MODAL 2: LINK A CARD - STRUCTURE UPDATED HERE -->
+    <!-- REPLACE the entire #modal-link-card with this corrected version -->
     <div class="modal" id="modal-link-card">
       <div class="modal-header">
         <button class="modal-close-btn modal-back-btn" id="link-card-back-btn">
@@ -408,7 +438,6 @@
         </button>
       </div>
       <div class="modal-content">
-        <!-- New container for the scan button -->
         <div class="form-action-header">
           <div class="scan-button">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -428,19 +457,36 @@
               />
             </svg>
           </div>
-          <!-- Scan button removed from here -->
           <input
-            type="text"
+            type="tel"
             class="input-field input-with-icon-left"
             placeholder="Card number"
+            id="card-number"
+            inputmode="numeric"
           />
+          <p class="error-message" id="card-number-error"></p>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <input type="text" class="input-field" placeholder="Expiry" />
+            <input
+              type="tel"
+              class="input-field"
+              placeholder="Expiry (MM/YY)"
+              id="card-expiry"
+              inputmode="numeric"
+            />
+            <p class="error-message" id="card-expiry-error"></p>
           </div>
           <div class="form-group">
-            <input type="text" class="input-field" placeholder="CVV" />
+            <input
+              type="tel"
+              class="input-field"
+              placeholder="CVV"
+              id="card-cvv"
+              inputmode="numeric"
+              maxlength="4"
+            />
+            <p class="error-message" id="card-cvv-error"></p>
             <div class="input-action-right">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path
@@ -466,35 +512,35 @@
       <div class="modal-footer">
         <button class="primary-btn" id="link-card-btn">Link Card</button>
       </div>
-      <!-- Add this new modal anywhere inside the <body> -->
-      <div class="modal" id="modal-feature-not-implemented">
-        <div class="modal-header">
-          <span class="modal-title"></span>
-          <button
-            class="modal-close-btn"
-            data-close-modal="modal-feature-not-implemented"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path
-                d="M18.022,8.121C18.412,7.731 18.412,7.097 18.022,6.707C17.631,6.316 16.998,6.316 16.607,6.707L12.365,10.949L8.123,6.707C7.733,6.317 7.1,6.317 6.709,6.707C6.319,7.098 6.319,7.731 6.709,8.121L10.951,12.363L6.708,16.607C6.317,16.997 6.317,17.63 6.708,18.021C7.098,18.411 7.732,18.411 8.122,18.021L12.365,13.778L16.609,18.021C16.999,18.411 17.632,18.411 18.023,18.021C18.413,17.63 18.413,16.997 18.023,16.607L13.78,12.363L18.022,8.121Z"
-              />
-            </svg>
-          </button>
-        </div>
-        <div class="feature-not-implemented-content">
-          Feature not implemented yet.
-        </div>
+    </div>
+    <!-- Add this new modal anywhere inside the <body> -->
+    <div class="modal" id="modal-feature-not-implemented">
+      <div class="modal-header">
+        <span class="modal-title"></span>
+        <button
+          class="modal-close-btn"
+          data-close-modal="modal-feature-not-implemented"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M18.022,8.121C18.412,7.731 18.412,7.097 18.022,6.707C17.631,6.316 16.998,6.316 16.607,6.707L12.365,10.949L8.123,6.707C7.733,6.317 7.1,6.317 6.709,6.707C6.319,7.098 6.319,7.731 6.709,8.121L10.951,12.363L6.708,16.607C6.317,16.997 6.317,17.63 6.708,18.021C7.098,18.411 7.732,18.411 8.122,18.021L12.365,13.778L16.609,18.021C16.999,18.411 17.632,18.411 18.023,18.021C18.413,17.63 18.413,16.997 18.023,16.607L13.78,12.363L18.022,8.121Z"
+            />
+          </svg>
+        </button>
       </div>
+      <div class="feature-not-implemented-content">
+        Feature not implemented yet.
+      </div>
+    </div>
 
-      <!-- Add a new toast notification for success -->
-      <div class="toast" id="success-toast">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path
-            d="M12 21a9 9 0 1 1 0-18a9 9 0 0 1 0 18zm0-1a8 8 0 1 0 0-16a8 8 0 0 0 0 16zm4.35-11.35a0.5 0.5 0 1 1 0.7 0.7l-7 7a0.5 0.5 0 0 1-0.71 0l-2.7-2.84a0.5 0.5 0 1 1 0.72-0.7l2.35 2.47l6.64-6.63z"
-          />
-        </svg>
-        <span>Card linked successfully!</span>
-      </div>
+    <!-- Add a new toast notification for success -->
+    <div class="toast" id="success-toast">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path
+          d="M12 21a9 9 0 1 1 0-18a9 9 0 0 1 0 18zm0-1a8 8 0 1 0 0-16a8 8 0 0 0 0 16zm4.35-11.35a0.5 0.5 0 1 1 0.7 0.7l-7 7a0.5 0.5 0 0 1-0.71 0l-2.7-2.84a0.5 0.5 0 1 1 0.72-0.7l2.35 2.47l6.64-6.63z"
+        />
+      </svg>
+      <span>Card linked successfully!</span>
     </div>
 
     <!-- Script will go here -->

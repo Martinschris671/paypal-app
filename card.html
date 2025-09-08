@@ -135,6 +135,88 @@
         fill: none;
         opacity: 0.9;
       }
+      /* --- NEW PREMIUM CARD STYLES --- */
+.card-container {
+  position: relative;
+  width: 100%;
+  border-radius: 21px;
+  overflow: hidden;
+  border: 1px solid #f5f4ee;
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  cursor: pointer;
+}
+.card-container:hover {
+  transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+  box-shadow: 0 35px 60px rgba(0, 0, 0, 0.5);
+}
+.card-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 70%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transform: skewX(-30deg);
+  z-index: 2;
+  transition: left 0.5s ease;
+}
+.card-container:hover::before {
+  left: 130%;
+}
+.card-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: brightness(0.9) contrast(1.2) saturate(1.1);
+  border-radius: 20px;
+}
+.card-overlay-text {
+  color: #ffffff;
+  font-family: "Inter", sans-serif; /* Use the premium font */
+  font-weight: 500;
+  position: absolute;
+  z-index: 1;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.7);
+}
+.card-type-label {
+  font-family: "PayPal-Open-Regular";
+  top: 25px;
+  right: 25px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.card-details-bottom-left {
+  font-family: "PayPal-Open-Regular";
+  bottom: 15px;
+  left: 15px;
+  font-size: 15px;
+  letter-spacing: 1.2px;
+  font-weight: bold;
+}
+.contactless-symbol {
+  position: absolute;
+  top: 50%;
+  right: 25px;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  z-index: 1;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+}
+.contactless-symbol svg path {
+  stroke: #ffffff;
+  stroke-width: 2.2;
+  fill: none;
+  opacity: 0.9;
+}
+
     </style>
   </head>
   <body>

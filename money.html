@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Money - PayPal</title>
+    <style>
+      /* --- FONT DEFINITIONS (assuming they are in a /fonts folder) --- */
+      @font-face {
+        font-family: "PayPal-Sans-Black";
+        src: url("fonts/pay_pal_pro_black.otf") format("opentype");
+        font-weight: 900;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "PayPal-Open-Regular";
+        src: url("fonts/pay_pal_open_regular.otf") format("opentype");
+        font-weight: normal;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "PayPal-Open-Plain";
+        src: url("fonts/pay_pal_plain_regular.otf") format("opentype");
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      /* --- GLOBAL STYLES & VARIABLES --- */
+      :root {
+        --background-color: #ffffff;
+        --text-primary: #000000;
+        --text-secondary: #545d68;
+        --paypal-blue: #0070ba;
+        --border-color: #d1d1d1;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "PayPal-Open-Regular", -apple-system, sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-primary);
+      }
+
+      #mobile-container {
+        max-width: 448px;
+        margin: 0 auto;
+        background-color: var(--background-color);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* --- NEW HIGH-END HEADER --- */
+      .page-header {
+        display: flex;
+        align-items: center;
+        padding: 16px;
+        height: 56px;
+        flex-shrink: 0;
+        position: relative;
+      }
+      .back-button {
+        position: absolute;
+        left: 16px;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+      .back-button svg {
+        width: 24px;
+        height: 24px;
+      }
+      .page-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-align: center;
+        flex-grow: 1; /* Allows the title to center properly */
+      }
+
+      /* --- MAIN CONTENT & AMOUNT INPUT --- */
+      main {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 24px;
+      }
+
+      .amount-input-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 48px 0;
+      }
+      .currency-symbol {
+        font-family: "PayPal-Open-Plain";
+        font-size: 3rem;
+        color: #000;
+        margin-right: 8px;
+      }
+      #amount-input {
+        font-family: "PayPal-Open-Plain";
+        font-size: 3.5rem;
+        border: none;
+        outline: none;
+        background: transparent;
+
+        width: 100%;
+        caret-color: var(--paypal-blue); /* Custom cursor color */
+      }
+      #amount-input::placeholder {
+        color: #d1d1d1;
+      }
+
+      .current-balance {
+        text-align: center;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: auto; /* Pushes everything above it up */
+      }
+
+      /* --- ADD MESSAGE & NEXT BUTTON --- */
+      .add-message-input {
+        width: 100%;
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        padding: 12px 0;
+        margin-bottom: 24px;
+      }
+      .add-message-input:focus {
+        border-bottom-color: var(--paypal-blue);
+      }
+
+      .primary-btn {
+        width: 100%;
+        background-color: var(--text-primary);
+        color: #ffffff;
+        border: none;
+        padding: 16px;
+        font-size: 1rem;
+        font-weight: 700;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: opacity 0.3s, background-color 0.3s;
+      }
+      .primary-btn:disabled {
+        background-color: #e0e0e0;
+        color: #a1a1a1;
+        cursor: not-allowed;
+      }
+
+      /* --- OVERLAYS (LOADING & SUCCESS) --- */
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .overlay.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .spinner {
+        width: 44px;
+        height: 44px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      /* --- UPDATED SUCCESS OVERLAY STYLES --- */
+      #success-overlay {
+        background-color: var(--background-color);
+      }
+      .success-content {
+        text-align: center;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Center content vertically */
+        height: 100%;
+        width: 100%;
+        max-width: 448px;
+      }
+      .success-message {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .success-text {
+        font-family: "PayPal-Sans-Black", sans-serif;
+        font-size: 1.8rem; /* Larger font size */
+        line-height: 1.3;
+        font-weight: 900;
+      }
+      .success-secondary-text {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        margin-top: 16px;
+        line-height: 1.5;
+      }
+      .feedback-link {
+        color: var(--paypal-blue);
+        font-weight: 600;
+        text-decoration: none;
+        margin-top: 24px;
+      }
+      /* The footer inside the overlay will inherit the main footer styles */
+      #success-overlay footer {
+        background: transparent; /* Make its background transparent */
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mobile-container">
+      <header class="page-header">
+        <button class="back-button" onclick="window.history.back()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <h1 class="page-title">Add Money</h1>
+      </header>
+
+      <main>
+        <div class="amount-input-wrapper">
+          <span class="currency-symbol">$</span>
+          <input
+            type="text"
+            id="amount-input"
+            placeholder="0"
+            inputmode="decimal"
+          />
+        </div>
+        <div class="current-balance" id="current-balance"></div>
+
+        <button class="primary-btn" id="confirm-btn" disabled>Next</button>
+      </main>
+    </div>
+
+    <!-- Overlays -->
+    <div class="overlay" id="loading-overlay"><div class="spinner"></div></div>
+    <!-- COMPLETELY RESTRUCTURED SUCCESS OVERLAY -->
+    <div class="overlay" id="success-overlay">
+      <div class="success-content">
+        <div class="success-message">
+          <h2 class="success-text" id="success-text"></h2>
+          <p class="success-secondary-text">
+            We'll let you know when the funds have been added.
+          </p>
+          <a href="#" class="feedback-link">Tell us how we did</a>
+        </div>
+        <footer>
+          <button class="primary-btn" id="done-btn">Done</button>
+        </footer>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- STATE & CONSTANTS ---
+        let state = {
+          currentMode: "add", // Simplified to one mode for this page
+          currentBalance: 0,
+          transactionHistory: [],
+        };
+        const MAX_AMOUNT = 99999.99;
+
+        // --- DOM ELEMENTS ---
+        const elements = {
+          amountInput: document.getElementById("amount-input"),
+          balanceDisplay: document.getElementById("current-balance"),
+          confirmBtn: document.getElementById("confirm-btn"),
+          loadingOverlay: document.getElementById("loading-overlay"),
+          successOverlay: document.getElementById("success-overlay"),
+          successText: document.getElementById("success-text"),
+          doneBtn: document.getElementById("done-btn"),
+        };
+
+        // --- LOCAL STORAGE ---
+        const storage = {
+          getBalance: () =>
+            parseFloat(localStorage.getItem("paypalBalance_v3") || "500.00"), // Start with some balance
+          saveBalance: (balance) =>
+            localStorage.setItem("paypalBalance_v3", balance.toString()),
+          getHistory: () =>
+            JSON.parse(localStorage.getItem("paypalHistory_v3") || "[]"),
+          saveHistory: (history) =>
+            localStorage.setItem("paypalHistory_v3", JSON.stringify(history)),
+        };
+
+        // --- UI UPDATE FUNCTIONS ---
+        const updateUI = () => {
+          elements.balanceDisplay.textContent = `Your Balance: $${state.currentBalance.toLocaleString(
+            "en-US",
+            { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+          )}`;
+          const amount =
+            parseFloat(elements.amountInput.value.replace(/,/g, "")) || 0;
+          elements.confirmBtn.disabled = amount <= 0;
+        };
+
+        // --- ADVANCED FORMATTING LOGIC ---
+        const formatCurrency = (value) => {
+          // Sanitize input: remove non-digits and non-decimal characters
+          let sanitized = value.replace(/[^\d.]/g, "");
+          let [integerPart, decimalPart] = sanitized.split(".");
+
+          // Prevent multiple decimals
+          if (decimalPart !== undefined) {
+            sanitized = `${integerPart}.${decimalPart}`;
+          }
+
+          // Enforce max value
+          if (parseFloat(sanitized) > MAX_AMOUNT) {
+            integerPart = "99999";
+            decimalPart = "99";
+          }
+
+          // Enforce two decimal places
+          if (decimalPart && decimalPart.length > 2) {
+            decimalPart = decimalPart.substring(0, 2);
+          }
+
+          // Format integer with commas
+          const formattedInteger = parseInt(integerPart || "0").toLocaleString(
+            "en-US"
+          );
+
+          return decimalPart !== undefined
+            ? `${formattedInteger}.${decimalPart}`
+            : formattedInteger;
+        };
+
+        // --- TRANSACTION LOGIC ---
+        const handleTransaction = () => {
+          const amount = parseFloat(
+            elements.amountInput.value.replace(/,/g, "")
+          );
+          if (isNaN(amount) || amount <= 0) return;
+
+          elements.loadingOverlay.classList.add("visible");
+
+          setTimeout(() => {
+            // This page is for "Add Money", but the logic can be adapted
+            const newBalance = state.currentBalance + amount;
+
+            const newTransaction = {
+              type: "add",
+              amount: amount,
+              timestamp: new Date().toISOString(),
+            };
+
+            state.transactionHistory.push(newTransaction);
+            state.currentBalance = newBalance;
+
+            storage.saveBalance(state.currentBalance);
+            storage.saveHistory(state.transactionHistory);
+
+            const formattedAmount = `$${amount.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`;
+            elements.successText.innerHTML = `You added <span>${formattedAmount}</span> to your PayPal balance.`;
+
+            elements.loadingOverlay.classList.remove("visible");
+            elements.successOverlay.classList.add("visible");
+
+            elements.amountInput.value = "";
+            updateUI();
+          }, 2000);
+        };
+
+        // --- INITIALIZATION ---
+        const initializePage = () => {
+          state.currentBalance = storage.getBalance();
+          state.transactionHistory = storage.getHistory();
+          updateUI();
+        };
+
+        // --- EVENT LISTENERS ---
+        elements.amountInput.addEventListener("input", (e) => {
+          const cursorPosition = e.target.selectionStart;
+          const originalLength = e.target.value.length;
+
+          const formatted = formatCurrency(e.target.value);
+          e.target.value = formatted;
+
+          const newLength = formatted.length;
+          const newCursorPosition =
+            cursorPosition + (newLength - originalLength);
+          e.target.setSelectionRange(newCursorPosition, newCursorPosition);
+
+          updateUI();
+        });
+
+        elements.amountInput.addEventListener("focus", () => {
+          if (elements.amountInput.value === "0")
+            elements.amountInput.value = "";
+        });
+
+        elements.confirmBtn.addEventListener("click", handleTransaction);
+        elements.doneBtn.addEventListener("click", () => {
+          elements.successOverlay.classList.remove("visible");
+        });
+
+        // --- START THE APP ---
+        initializePage();
+      });
+    </script>
+  </body>
+</html>

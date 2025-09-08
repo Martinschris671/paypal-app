@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wallet - PayPal</title>
+    <link rel="stylesheet" href="wallet.css" />
     <style>
       /* --- FONT DEFINITIONS (assuming they are in a /fonts folder) --- */
       @font-face {
@@ -300,10 +301,11 @@
             <div class="balance-amount-large">US$0.00</div>
           </section>
 
+          <!-- This is the NEW, DYNAMIC Cards section -->
           <section>
             <div class="section-header">
               <h2 class="section-title">Cards</h2>
-              <a href="#" class="add-new-link">
+              <a href="#" class="add-new-link" id="open-wallet-modal-btn">
                 <span>Add new</span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                   <path
@@ -312,37 +314,41 @@
                 </svg>
               </a>
             </div>
-            <div class="content-card add-card-block">
-              <div class="text-content">
-                <div class="title">Add credit cards</div>
-                <div class="subtitle">
-                  Pay easily without sharing card details with stores,
-                  merchants, and sellers.
+            <!-- This container will hold either the add block or the card -->
+            <div id="cards-container">
+              <!-- The "Add card" block is now inside the container -->
+              <div class="content-card add-card-block">
+                <div class="text-content">
+                  <div class="title">Add credit cards</div>
+                  <div class="subtitle">
+                    Pay easily without sharing card details with stores,
+                    merchants, and sellers.
+                  </div>
                 </div>
-              </div>
-              <div class="card-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
-                  <path
-                    fill="#d8a6ff"
-                    d="M32 40a4 4 0 0 1 4-4h52a4 4 0 0 1 4 4v32a4 4 0 0 1-4 4H36a4 4 0 0 1-4-4V40z"
-                  />
-                  <path
-                    fill="#5bbbfc"
-                    d="M4 24a4 4 0 0 1 4-4h52a4 4 0 0 1 4 4v32a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V24z"
-                  />
-                  <path
-                    fill="#faf8f5"
-                    d="M64 36v20a4 4 0 0 1-4 4H32V40a4 4 0 0 1 4-4h28z"
-                  />
-                  <path
-                    fill="#001c64"
-                    d="M13 28a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V29a1 1 0 0 0-1-1H13zm51 16H32v8h32v-8z"
-                  />
-                  <path
-                    fill="#7252cc"
-                    d="M92 44H64v8h28v-8zM55 69.5a1 1 0 0 0 1-1V67a1 1 0 0 0-1-1H37a1 1 0 0 0-1 1v1.5a1 1 0 0 0 1 1h18z"
-                  />
-                </svg>
+                <div class="card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+                    <path
+                      fill="#d8a6ff"
+                      d="M32 40a4 4 0 0 1 4-4h52a4 4 0 0 1 4 4v32a4 4 0 0 1-4 4H36a4 4 0 0 1-4-4V40z"
+                    />
+                    <path
+                      fill="#5bbbfc"
+                      d="M4 24a4 4 0 0 1 4-4h52a4 4 0 0 1 4 4v32a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V24z"
+                    />
+                    <path
+                      fill="#faf8f5"
+                      d="M64 36v20a4 4 0 0 1-4 4H32V40a4 4 0 0 1 4-4h28z"
+                    />
+                    <path
+                      fill="#001c64"
+                      d="M13 28a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V29a1 1 0 0 0-1-1H13zm51 16H32v8h32v-8z"
+                    />
+                    <path
+                      fill="#7252cc"
+                      d="M92 44H64v8h28v-8zM55 69.5a1 1 0 0 0 1-1V67a1 1 0 0 0-1-1H37a1 1 0 0 0-1 1v1.5a1 1 0 0 0 1 1h18z"
+                    />
+                  </svg>
+                </div>
               </div>
             </div>
           </section>
@@ -421,6 +427,199 @@
         </div>
       </nav>
     </footer>
+    <!-- MODAL 1: ADD TO WALLET -->
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal" id="modal-add-to-wallet">
+      <div class="modal-header">
+        <span class="modal-title">Add to Wallet</span>
+        <button class="modal-close-btn" data-close-modal="modal-add-to-wallet">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M18.022,8.121C18.412,7.731 18.412,7.097 18.022,6.707C17.631,6.316 16.998,6.316 16.607,6.707L12.365,10.949L8.123,6.707C7.733,6.317 7.1,6.317 6.709,6.707C6.319,7.098 6.319,7.731 6.709,8.121L10.951,12.363L6.708,16.607C6.317,16.997 6.317,17.63 6.708,18.021C7.098,18.411 7.732,18.411 8.122,18.021L12.365,13.778L16.609,18.021C16.999,18.411 17.632,18.411 18.023,18.021C18.413,17.63 18.413,16.997 18.023,16.607L13.78,12.363L18.022,8.121Z"
+            />
+          </svg>
+        </button>
+      </div>
+      <div class="wallet-option-list">
+        <div class="wallet-option" id="open-bank-modal-btn">
+          <div class="wallet-option-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                fill="#000000"
+                d="M2.25 9.75H4.5v6H3a0.75 0.75 0 1 0 0 1.5h18a0.75 0.75 0 1 0 0-1.5h-1.5v-6h2.25a0.75 0.75 0 0 0 0.4-1.39l-9.76-6a0.75 0.75 0 0 0-0.78 0l-9.75 6a0.75 0.75 0 0 0 0.39 1.39zm3.75 0h3v6H6v-6zm7.5 0v6h-3v-6h3zm4.5 6h-3v-6h3v6zM12 3.88l7.1 4.37H4.9L12 3.88zM23.25 19.5a0.75 0.75 0 0 1-0.75 0.75h-21a0.75 0.75 0 1 1 0-1.5h21a0.75 0.75 0 0 1 0.75 0.75z"
+              />
+            </svg>
+          </div>
+          <div class="wallet-option-text">
+            <div class="title">Bank accounts</div>
+            <div class="subtitle">
+              Transfer money you receive to your bank account.
+            </div>
+          </div>
+        </div>
+        <div class="wallet-option" id="open-link-card-btn">
+          <div class="wallet-option-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                fill="#000000"
+                d="M21 4.5H3A1.5 1.5 0 0 0 1.5 6v12A1.5 1.5 0 0 0 3 19.5h18a1.5 1.5 0 0 0 1.5-1.5V6A1.5 1.5 0 0 0 21 4.5zM21 6v2.25H3V6h18zm0 12H3V9.75h18V18zm-1.5-2.25a0.75 0.75 0 0 1-0.75 0.75h-3a0.75 0.75 0 1 1 0-1.5h3a0.75 0.75 0 0 1 0.75 0.75zm-6 0a0.75 0.75 0 0 1-0.75 0.75h-1.5a0.75 0.75 0 1 1 0-1.5h1.5a0.75 0.75 0 0 1 0.75 0.75z"
+              />
+            </svg>
+          </div>
+          <div class="wallet-option-text">
+            <div class="title">Debit and credit cards</div>
+            <div class="subtitle">
+              Keep your card information secure when shopping
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPLACE the entire #modal-link-card with this corrected version -->
+    <div class="modal" id="modal-link-card">
+      <div class="modal-header">
+        <button class="modal-close-btn modal-back-btn" id="link-card-back-btn">
+          <!-- 4. New, simpler SVG for the back arrow -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M19 12H5"></path>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <span class="modal-title">Link a card</span>
+        <button class="modal-close-btn" data-close-modal="modal-link-card">
+          <!-- 5. New, simpler SVG for the close icon -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-content">
+        <div class="form-action-header">
+          <div class="scan-button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                d="M19.5 5.25h-2.6l-1.28-1.92A0.75 0.75 0 0 0 15 3H9a0.75 0.75 0 0 0-0.62 0.33L7.1 5.25H4.5A2.25 2.25 0 0 0 2.25 7.5V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V7.5a2.25 2.25 0 0 0-2.25-2.25zM20.25 18a0.75 0.75 0 0 1-0.75 0.75h-15A0.75 0.75 0 0 1 3.75 18V7.5A0.75 0.75 0 0 1 4.5 6.75h3a0.75 0.75 0 0 0 0.62-0.33L9.4 4.5h5.2l1.28 1.92a0.75 0.75 0 0 0 0.62 0.33h3a0.75 0.75 0 0 1 0.75 0.75V18zM12 8.25a4.13 4.13 0 1 0 0 8.25a4.13 4.13 0 0 0 0-8.25zM12 15a2.63 2.63 0 1 1 0-5.25A2.63 2.63 0 0 1 12 15z"
+              />
+            </svg>
+            <span>Scan</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-icon-left">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                fill="#545d68"
+                d="M21 4.5H3A1.5 1.5 0 0 0 1.5 6v12A1.5 1.5 0 0 0 3 19.5h18a1.5 1.5 0 0 0 1.5-1.5V6A1.5 1.5 0 0 0 21 4.5zM21 6v2.25H3V6h18zm0 12H3V9.75h18V18zm-1.5-2.25a0.75 0.75 0 0 1-0.75 0.75h-3a0.75 0.75 0 1 1 0-1.5h3a0.75 0.75 0 0 1 0.75 0.75zm-6 0a0.75 0.75 0 0 1-0.75 0.75h-1.5a0.75 0.75 0 1 1 0-1.5h1.5a0.75 0.75 0 0 1 0.75 0.75z"
+              />
+            </svg>
+          </div>
+          <input
+            type="tel"
+            class="input-field input-with-icon-left"
+            placeholder="Card number"
+            id="card-number"
+            inputmode="numeric"
+          />
+          <p class="error-message" id="card-number-error"></p>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <input
+              type="tel"
+              class="input-field"
+              placeholder="Expiry (MM/YY)"
+              id="card-expiry"
+              inputmode="numeric"
+            />
+            <p class="error-message" id="card-expiry-error"></p>
+          </div>
+          <div class="form-group">
+            <input
+              type="tel"
+              class="input-field"
+              placeholder="CVV"
+              id="card-cvv"
+              inputmode="numeric"
+              maxlength="4"
+            />
+            <p class="error-message" id="card-cvv-error"></p>
+            <div class="input-action-right">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path
+                  fill="#000000"
+                  d="M12 3a9 9 0 1 1 0 18a9 9 0 0 1 0-18zm0 1a8 8 0 1 0 0 16a8 8 0 0 0 0-16zm0.06 12c0.3 0 0.55 0.25 0.55 0.56c0 0.3-0.25 0.55-0.55 0.55a0.56 0.56 0 0 1-0.56-0.55c0-0.31 0.25-0.56 0.56-0.56zM11.79 6c1.92 0 3.51 1.37 3.51 3.41c0 1.6-0.93 2.74-2.68 3.38l-0.12 0.05v1.24a0.5 0.5 0 0 1-0.41 0.5H12a0.5 0.5 0 0 1-0.5-0.4v-0.1v-1.98l0.36-0.1c1.67-0.5 2.44-1.35 2.44-2.59C14.3 7.96 13.18 7 11.79 7C10.66 7 9.6 7.68 9.5 8.33L9.5 8.44a0.5 0.5 0 0 1-1 0C8.5 7.1 10.12 6 11.79 6z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="billing-section">
+          <div class="billing-header">
+            <span class="billing-title">Billing address</span>
+            <span class="change-link">Change</span>
+          </div>
+          <div class="address-block">
+            123 Main Street<br />
+            San Jose, CA 95131<br />
+            United States
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="primary-btn" id="link-card-btn">Link Card</button>
+      </div>
+    </div>
+    <!-- Add this new modal anywhere inside the <body> -->
+    <div class="modal" id="modal-feature-not-implemented">
+      <div class="modal-header">
+        <span class="modal-title"></span>
+        <button
+          class="modal-close-btn"
+          data-close-modal="modal-feature-not-implemented"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M18.022,8.121C18.412,7.731 18.412,7.097 18.022,6.707C17.631,6.316 16.998,6.316 16.607,6.707L12.365,10.949L8.123,6.707C7.733,6.317 7.1,6.317 6.709,6.707C6.319,7.098 6.319,7.731 6.709,8.121L10.951,12.363L6.708,16.607C6.317,16.997 6.317,17.63 6.708,18.021C7.098,18.411 7.732,18.411 8.122,18.021L12.365,13.778L16.609,18.021C16.999,18.411 17.632,18.411 18.023,18.021C18.413,17.63 18.413,16.997 18.023,16.607L13.78,12.363L18.022,8.121Z"
+            />
+          </svg>
+        </button>
+      </div>
+      <div class="feature-not-implemented-content">
+        Feature not implemented yet.
+      </div>
+    </div>
+
+    <!-- Add a new toast notification for success -->
+    <div class="toast" id="success-toast">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path
+          d="M12 21a9 9 0 1 1 0-18a9 9 0 0 1 0 18zm0-1a8 8 0 1 0 0-16a8 8 0 0 0 0 16zm4.35-11.35a0.5 0.5 0 1 1 0.7 0.7l-7 7a0.5 0.5 0 0 1-0.71 0l-2.7-2.84a0.5 0.5 0 1 1 0.72-0.7l2.35 2.47l6.64-6.63z"
+        />
+      </svg>
+      <span>Card linked successfully!</span>
+    </div>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -441,5 +640,7 @@
         });
       });
     </script>
+    <script src="wallet.js"></script>
+    <script src="card.js"></script>
   </body>
 </html>

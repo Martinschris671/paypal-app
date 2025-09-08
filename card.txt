@@ -1,0 +1,203 @@
+// Wait for the entire HTML document to be loaded and parsed
+document.addEventListener("DOMContentLoaded", () => {
+  //======================================================================
+  // 1. GATHER ALL HTML ELEMENTS
+  //======================================================================
+  // Modals & Overlays
+  const backdrop = document.getElementById("modal-backdrop");
+  const walletModal = document.getElementById("modal-add-to-wallet");
+  const linkCardModal = document.getElementById("modal-link-card");
+  const featureModal = document.getElementById("modal-feature-not-implemented");
+  const successToast = document.getElementById("success-toast");
+
+  // Buttons
+  const openWalletBtn = document.getElementById("open-wallet-modal-btn");
+  const openLinkCardBtn = document.getElementById("open-link-card-btn");
+  const openBankModalBtn = document.getElementById("open-bank-modal-btn");
+  const linkCardBackBtn = document.getElementById("link-card-back-btn");
+  const linkCardBtn = document.getElementById("link-card-btn");
+  const allCloseBtns = document.querySelectorAll("[data-close-modal]");
+
+  // Form Inputs & Error Messages
+  const cardNumberInput = document.getElementById("card-number");
+  const cardExpiryInput = document.getElementById("card-expiry");
+  const cardCvvInput = document.getElementById("card-cvv");
+  const cardNumberError = document.getElementById("card-number-error");
+  const cardExpiryError = document.getElementById("card-expiry-error");
+  const cardCvvError = document.getElementById("card-cvv-error");
+
+  // Dynamic Content Container
+  const cardsContainer = document.getElementById("cards-container");
+
+  //======================================================================
+  // 2. DEFINE HELPER FUNCTIONS
+  //======================================================================
+
+  // --- Modal & UI Control ---
+  const showModal = (modalEl) => {
+    if (!modalEl) return;
+    backdrop.classList.add("visible");
+    modalEl.classList.add("visible");
+  };
+  const hideModal = (modalEl) => {
+    if (!modalEl) return;
+    backdrop.classList.remove("visible");
+    modalEl.classList.remove("visible");
+  };
+  const showToast = (toastEl) => {
+    if (!toastEl) return;
+    toastEl.classList.add("visible");
+    setTimeout(() => toastEl.classList.remove("visible"), 3000);
+  };
+  const resetForm = () => {
+    if (cardNumberInput) cardNumberInput.value = "";
+    if (cardExpiryInput) cardExpiryInput.value = "";
+    if (cardCvvInput) cardCvvInput.value = "";
+    [cardNumberInput, cardExpiryInput, cardCvvInput].forEach((input) => {
+      if (input) input.classList.remove("input-error");
+    });
+    [cardNumberError, cardExpiryError, cardCvvError].forEach((error) => {
+      if (error) error.textContent = "";
+    });
+  };
+
+  // --- Card HTML Generation ---
+  const createPremiumCardHTML = (cardDetails) => {
+    const cardImageUrl = "icons/TBL1_1_PBZc_2020_Visa_Classic_Ziro_052020.webp";
+    return `
+            <div class="card-container">
+                <img class="card-image" src="${cardImageUrl}" alt="Premium Card Image" />
+              
+                <div class="card-overlay-text card-details-bottom-left">
+                    <span>&bull;&bull; ${cardDetails.cardNumberLast4}</span>
+                </div>
+              
+            </div>
+        `;
+  };
+
+  // --- Main Logic Functions ---
+  const renderCardView = () => {
+    const savedCardDetails = JSON.parse(
+      localStorage.getItem("linkedCardDetails")
+    );
+    if (savedCardDetails && cardsContainer) {
+      cardsContainer.innerHTML = createPremiumCardHTML(savedCardDetails);
+    }
+  };
+
+  const validateAndSaveCard = () => {
+    if (!linkCardBtn || !cardNumberInput || !cardExpiryInput || !cardCvvInput)
+      return;
+
+    let isValid = true;
+    linkCardBtn.disabled = true;
+
+    const fields = [
+      { input: cardNumberInput, error: cardNumberError },
+      { input: cardExpiryInput, error: cardExpiryError },
+      { input: cardCvvInput, error: cardCvvError },
+    ];
+
+    fields.forEach(({ input, error }) => {
+      if (input) input.classList.remove("input-error");
+      if (error) error.textContent = "";
+    });
+
+    const cardNumber = cardNumberInput.value.replace(/\s/g, "");
+    const cardExpiry = cardExpiryInput.value;
+    const cardCvv = cardCvvInput.value;
+
+    if (
+      !cardNumber ||
+      cardNumber.length !== 16 ||
+      !/^\d{16}$/.test(cardNumber)
+    ) {
+      isValid = false;
+      cardNumberInput.classList.add("input-error");
+      cardNumberError.textContent =
+        "Please enter a valid 16-digit card number.";
+    }
+    if (!/^(0[1-9]|1[0-2])\/?([0-9]{2})$/.test(cardExpiry)) {
+      isValid = false;
+      cardExpiryInput.classList.add("input-error");
+      cardExpiryError.textContent = "Please use MM/YY format.";
+    }
+    if (!cardCvv || !/^\d{3,4}$/.test(cardCvv)) {
+      isValid = false;
+      cardCvvInput.classList.add("input-error");
+      cardCvvError.textContent = "Enter a valid 3 or 4-digit CVV.";
+    }
+
+    if (isValid) {
+      // ** BUG FIX IS HERE: cardDetails object is created inside this scope **
+      const cardDetails = {
+        cardNumberLast4: cardNumber.slice(-4),
+        cardExpiry: cardExpiry,
+      };
+      localStorage.setItem("linkedCardDetails", JSON.stringify(cardDetails));
+
+      showToast(successToast);
+      hideModal(linkCardModal);
+      resetForm();
+      renderCardView();
+    }
+
+    linkCardBtn.disabled = false;
+  };
+
+  //======================================================================
+  // 3. SET UP EVENT LISTENERS
+  //======================================================================
+  if (openWalletBtn)
+    openWalletBtn.addEventListener("click", () => showModal(walletModal));
+  if (openLinkCardBtn)
+    openLinkCardBtn.addEventListener("click", () => {
+      hideModal(walletModal);
+      setTimeout(() => showModal(linkCardModal), 200);
+    });
+  if (openBankModalBtn)
+    openBankModalBtn.addEventListener("click", () => {
+      hideModal(walletModal);
+      setTimeout(() => showModal(featureModal), 200);
+    });
+  if (linkCardBackBtn)
+    linkCardBackBtn.addEventListener("click", () => {
+      hideModal(linkCardModal);
+      resetForm();
+      setTimeout(() => showModal(walletModal), 200);
+    });
+  if (linkCardBtn) linkCardBtn.addEventListener("click", validateAndSaveCard);
+
+  allCloseBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const modalId = btn.getAttribute("data-close-modal");
+      hideModal(document.getElementById(modalId));
+    });
+  });
+
+  if (backdrop)
+    backdrop.addEventListener("click", () => {
+      hideModal(walletModal);
+      hideModal(linkCardModal);
+      hideModal(featureModal);
+    });
+
+  // --- Input Formatting Listeners ---
+  if (cardNumberInput)
+    cardNumberInput.addEventListener("input", (e) => {
+      let value = e.target.value.replace(/\D/g, "").substring(0, 16);
+      e.target.value = value.replace(/(.{4})/g, "$1 ").trim();
+    });
+  if (cardExpiryInput)
+    cardExpiryInput.addEventListener("input", (e) => {
+      let value = e.target.value.replace(/\D/g, "").substring(0, 4);
+      if (value.length > 2) value = value.slice(0, 2) + "/" + value.slice(2);
+      e.target.value = value;
+    });
+
+  //======================================================================
+  // 4. INITIALIZE THE VIEW ON PAGE LOAD
+  //======================================================================
+  renderCardView();
+});
