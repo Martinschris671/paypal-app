@@ -15,7 +15,7 @@
       body {
         font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
           Roboto, Helvetica, Arial, sans-serif;
-        background-color: #ffffff; /* Dark background to make the 3D effect pop */
+        background-color: #ffffff; /* Set background to white as requested */
         display: flex;
         justify-content: center;
         align-items: center;
@@ -27,8 +27,8 @@
       }
 
       /* 
-        1. The main card container with 3D properties.
-        */
+      1. The main card container with a new, subtle shadow.
+      */
       .card-container {
         position: relative;
         max-width: 400px;
@@ -39,29 +39,28 @@
         border-radius: 20px;
         overflow: hidden;
         color: #ffffff;
-        /* Enables 3D transformations for child elements */
         transform-style: preserve-3d;
-        /* Smooth transition for the hover effect */
         transition: transform 0.4s ease, box-shadow 0.4s ease;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
+        /* A very small, realistic shadow for the light background */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1),
           inset 0 0 1px 1px rgba(255, 255, 255, 0.08);
       }
 
-      /* 2. The interactive hover effect that makes the card "lift" and tilt */
+      /* 2. The hover effect with a slightly stronger, but still realistic shadow */
       .card-container:hover {
-        transform: translateY(-15px) rotateX(8deg) rotateY(3deg);
-        box-shadow: 0 40px 60px rgba(0, 0, 0, 0.5),
+        transform: translateY(-10px) rotateX(5deg) rotateY(2deg);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15),
           inset 0 0 1px 1px rgba(255, 255, 255, 0.08);
       }
 
       /* 
-        3. The realistic glare effect using a pseudo-element.
-        */
+      3. The realistic glare effect using a pseudo-element.
+      */
       .card-container::before {
         content: "";
         position: absolute;
         top: 0;
-        left: -100%; /* Start off-screen */
+        left: -100%;
         width: 60%;
         height: 100%;
         background: linear-gradient(
@@ -71,11 +70,10 @@
           transparent
         );
         transform: skewX(-30deg);
-        z-index: 2; /* Sits above the background but below the text */
+        z-index: 2;
         transition: left 0.6s ease;
       }
 
-      /* The glare moves across the card on hover */
       .card-container:hover::before {
         left: 140%;
       }
@@ -93,7 +91,6 @@
       }
 
       .paypal-logo svg {
-        /* Fixes a potential SVG alignment issue */
         display: block;
       }
 
@@ -104,11 +101,11 @@
       }
 
       /* 
-        5. Card Number Placement.
-        */
+      5. Card Number Placement: Fine-tuned vertical position.
+      */
       .card-number {
-        bottom: 5%;
-        left: 8%;
+        bottom: 8%;
+        left: 6%;
         font-size: 1.1rem;
         font-weight: 500;
         letter-spacing: 2px;
@@ -116,31 +113,35 @@
       }
 
       /*
-        6. Container for the items on the bottom-right.
-        */
+      6. Container for the items on the bottom-right.
+      */
       .card-info-right {
         bottom: 5%;
-        right: 8%;
+        right: 5%;
         display: flex;
         flex-direction: column;
-        align-items: flex-end;
+        /* This centers the debit label over the logo */
+        align-items: center;
       }
 
       .debit-label {
         font-size: 0.75rem;
         font-weight: 500;
-        margin-bottom: 4px;
+        margin-bottom: 6px; /* Adjusted space for the larger logo */
         opacity: 0.9;
       }
 
+      /* 
+      7. Mastercard Logo: Resized to be much larger, as per the image.
+      */
       .mastercard-logo {
-        width: 60px;
+        width: 75px;
         height: auto;
       }
     </style>
   </head>
   <body>
-    <div class="card-container">
+    <div class="card-container" id="cards-container">
       <div class="paypal-logo">
         <svg viewBox="0 0 135.0 48.0" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -175,4 +176,5 @@
       </div>
     </div>
   </body>
+  <script src="card.js"></script>
 </html>
