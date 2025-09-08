@@ -83,7 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
       };
       localStorage.setItem("linkedCardDetails", JSON.stringify(cardDetails));
 
-      alert("Card linked successfully!"); // Simple success feedback
       hideModal(linkCardModal); // Close modal on success
     }
   };

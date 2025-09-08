@@ -350,7 +350,7 @@ body {
   aspect-ratio: 1.586 / 1;
   background-color: #002991;
   border: 1px solid #f5f4ee;
-  border-radius: 15px;
+  border-radius: 12px;
   overflow: hidden;
   color: #ffffff;
   transform-style: preserve-3d;
@@ -406,15 +406,39 @@ body {
   z-index: 3;
 }
 
+/* MODIFY this existing style */
 .card-number {
   font-family: "PayPal-Open-Regular";
-  bottom: 8%;
-  left: 6%;
-  font-size: 1.1rem;
-  font-weight: 500;
-  letter-spacing: 2px;
+  bottom: 7%;
+  left: 5%;
+  font-size: 0.8rem;
+  font-weight: bold;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  /* Add these properties */
+  display: flex;
+  align-items: center;
+  gap: 0.2rem; /* Adjusts space between dots and numbers */
 }
+
+/* ADD these new styles */
+.card-dots {
+  display: flex;
+  gap: 3px; /* Adjusts space between each dot */
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  opacity: 0.9;
+}
+
+.last-four {
+  letter-spacing: 1px; /* Moves the letter-spacing to just the numbers */
+}
+
+/* All other CSS remains the same */
 
 .card-info-right {
   bottom: 5%;
@@ -433,6 +457,6 @@ body {
 }
 
 .mastercard-logo {
-  width: 75px;
+  width: 70px;
   height: auto;
 }

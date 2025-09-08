@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         <div class="card-element card-number">
             <div class="card-dots">
-                <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span>
             </div>
             <span class="last-four">${cardDetails.cardNumberLast4}</span>
         </div>
