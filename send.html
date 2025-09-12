@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Send Money</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      @font-face {
+        font-family: "PayPal-Open-Regular";
+        src: url("fonts/pay_pal_open_regular.otf") format("opentype");
+        font-weight: normal;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "PayPal-Open-Plain";
+        src: url("fonts/pay_pal_plain_regular.otf") format("opentype");
+        font-weight: normal;
+        font-style: normal;
+      }
+      /* --- GLOBAL STYLES & VARIABLES --- */
+      :root {
+        --background-color: #ffffff;
+        --text-primary: #000000;
+        --text-secondary: #545d68;
+        --border-color: #e1e1e1;
+        --skeleton-bg: #e0e0e0;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "PayPal-Open-Regular";
+        background-color: var(--background-color);
+        color: var(--text-primary);
+        overflow: hidden;
+      }
+
+      #mobile-container {
+        max-width: 448px;
+        margin: 0 auto;
+        background-color: var(--background-color);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* --- FIXED HEADER --- */
+      .fixed-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        flex-shrink: 0;
+      }
+      .back-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+      }
+      .back-button svg {
+        width: 24px;
+        height: 24px;
+      }
+      /* Ensure the new SVG icon is black like the image */
+      .back-button svg path {
+        fill: var(--text-secondary);
+      }
+
+      .search-bar {
+        position: relative;
+        flex-grow: 1;
+      }
+      .search-input {
+        width: 100%;
+        padding: 15px 45px 15px 19px;
+        font-family: "PayPal-Open-Regular";
+        font-size: 1rem;
+        border: 2px solid var(--border-color);
+        border-radius: 30px;
+        outline: none;
+      }
+      .search-input:focus {
+        border-color: #0070ba;
+      }
+      .clear-icon {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: none;
+      }
+      .clear-icon.visible {
+        display: block;
+      }
+      .clear-icon svg {
+        width: 15px;
+        height: 15px;
+        display: block;
+      }
+      .clear-icon svg path {
+        fill: var(--text-secondary);
+      }
+
+      /* --- MAIN CONTENT AREA --- */
+      .main-content {
+        padding: 16px;
+        overflow-y: auto;
+        flex-grow: 1;
+        padding-top: 5px;
+      }
+      .list-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 24px;
+      }
+
+      /* --- USER LIST ITEM --- */
+      .user-list-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+        cursor: pointer;
+      }
+      .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #ffffff;
+        font-size: 1rem;
+        font-family: "PayPal-Open-Plain";
+      }
+      .avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .user-details {
+        flex-grow: 1;
+      }
+      .user-details .name {
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 4px;
+      }
+      .user-details .handle {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+      .info-icon {
+        flex-shrink: 0;
+      }
+      .info-icon svg {
+        width: 24px;
+        height: 24px;
+      }
+      .info-icon svg path {
+        fill: var(--text-primary);
+      }
+
+      /* --- LOADING SKELETON --- */
+      .skeleton-list .user-list-item {
+        cursor: default;
+      }
+      .skeleton-list .avatar {
+        background-color: var(--skeleton-bg);
+      }
+      .skeleton-list .name {
+        height: 16px;
+        width: 60%;
+        background-color: var(--skeleton-bg);
+        border-radius: 4px;
+        margin-bottom: 8px;
+      }
+      .skeleton-list .handle {
+        height: 14px;
+        width: 40%;
+        background-color: var(--skeleton-bg);
+        border-radius: 4px;
+      }
+      .skeleton-list .shimmer {
+        animation: shimmer 1.5s infinite linear;
+        background: linear-gradient(
+          90deg,
+          var(--skeleton-bg) 25%,
+          #f0f0f0 50%,
+          var(--skeleton-bg) 75%
+        );
+        background-size: 200% 100%;
+      }
+      @keyframes shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+      .no-results {
+        text-align: center;
+        color: var(--text-secondary);
+        padding: 40px 0;
+      }
+
+      /* --- UPDATED CONFIRMATION MODAL --- */
+      .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        z-index: 998;
+      }
+      .modal-backdrop.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .modal-sheet {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-width: 448px;
+        margin: 0 auto;
+        background-color: var(--background-color);
+        border-radius: 16px 16px 0 0;
+        padding: 16px 24px 24px;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        transform: translateY(100%);
+        transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        z-index: 999;
+        /* text-align is now left by default */
+      }
+      .modal-sheet.visible {
+        transform: translateY(0);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 24px;
+      }
+      .modal-close-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+      .modal-close-btn svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      /* New container for left-aligned avatar and details */
+      .modal-profile-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 32px;
+      }
+
+      .modal-avatar {
+        width: 56px; /* Slightly larger avatar in modal */
+        height: 56px;
+      }
+
+      .modal-prompt {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 24px;
+      }
+
+      .modal-continue-btn {
+        width: 100%;
+        background-color: var(--text-primary);
+        color: var(--background-color);
+        border: none;
+        padding: 16px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 30px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mobile-container">
+      <!-- Header with NEW Back Arrow -->
+      <header class="fixed-header">
+        <button class="back-button" onclick="window.history.back()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24.0 24.0">
+            <path
+              d="M21 12a0.75 0.75 0 0 1-0.75 0.75H5.56l5.47 5.47a0.75 0.75 0 1 1-1.06 1.06l-6.75-6.75a0.75 0.75 0 0 1 0-1.06l6.75-6.75a0.75 0.75 0 1 1 1.06 1.06l-5.47 5.47h14.69A0.75 0.75 0 0 1 21 12z"
+            />
+          </svg>
+        </button>
+        <div class="search-bar">
+          <input
+            type="text"
+            class="search-input"
+            id="search-input"
+            placeholder="Name, username, email"
+          />
+          <button class="clear-icon" id="clear-icon">
+            <svg
+              fill="#000000"
+              viewBox="0 0 16 16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M-16,0a8.009,8.009,0,0,0-8,8,8.009,8.009,0,0,0,8,8A8.009,8.009,0,0,0-8,8,8.009,8.009,0,0,0-16,0Zm0,15a7.008,7.008,0,0,1-7-7,7.008,7.008,0,0,1,7-7A7.008,7.008,0,0,1-9,8,7.008,7.008,0,0,1-16,15Zm3.854-10.146L-15.293,8l3.147,3.146a.5.5,0,0,1,0,.708A.5.5,0,0,1-12.5,12a.5.5,0,0,1-.354-.146L-16,8.707l-3.146,3.147A.5.5,0,0,1-19.5,12a.5.5,0,0,1-.354-.146.5.5,0,0,1,0-.708L-16.707,8l-3.147-3.146a.5.5,0,0,1,0-.708.5.5,0,0,1,.708,0L-16,7.293l3.146-3.147a.5.5,0,0,1,.708,0A.5.5,0,0,1-12.146,4.854Z"
+                transform="translate(24)"
+              />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <h2 class="list-title" id="list-title">Your contacts</h2>
+        <div class="user-list" id="user-list"></div>
+      </main>
+    </div>
+
+    <!-- Confirmation Modal with UPDATED layout -->
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-sheet" id="modal-sheet">
+      <div class="modal-header">
+        <button class="modal-close-btn" id="modal-close-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M18.022,8.121C18.412,7.731 18.412,7.097 18.022,6.707C17.631,6.316 16.998,6.316 16.607,6.707L12.365,10.949L8.123,6.707C7.733,6.317 7.1,6.317 6.709,6.707C6.319,7.098 6.319,7.731 6.709,8.121L10.951,12.363L6.708,16.607C6.317,16.997 6.317,17.63 6.708,18.021C7.098,18.411 7.732,18.411 8.122,18.021L12.365,13.778L16.609,18.021C16.999,18.411 17.632,18.411 18.023,18.021C18.413,17.63 18.413,16.997 18.023,16.607L13.78,12.363L18.022,8.121Z"
+            />
+          </svg>
+        </button>
+      </div>
+      <!-- New container for profile info -->
+      <div class="modal-profile-info">
+        <div class="avatar modal-avatar" id="modal-avatar"></div>
+        <div
+          class="user-details modal-user-details"
+          id="modal-user-details"
+        ></div>
+      </div>
+      <p class="modal-prompt">Is this the right person?</p>
+      <button class="modal-continue-btn">Continue</button>
+    </div>
+
+    <script>
+      // --- The JavaScript from the previous step remains unchanged ---
+      document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.getElementById("search-input");
+        const clearIcon = document.getElementById("clear-icon");
+        const listTitle = document.getElementById("list-title");
+        const userList = document.getElementById("user-list");
+        const modalBackdrop = document.getElementById("modal-backdrop");
+        const modalSheet = document.getElementById("modal-sheet");
+        const modalCloseBtn = document.getElementById("modal-close-btn");
+        const modalAvatar = document.getElementById("modal-avatar");
+        const modalUserDetails = document.getElementById("modal-user-details");
+        let masterUserList = [];
+        let initialContacts = [];
+        let searchTimeout;
+        const AVATAR_COLORS = ["#000", "#253B80", "#169BD7"];
+        const getRandomItem = (arr) =>
+          arr[Math.floor(Math.random() * arr.length)];
+        const generateUserData = (apiUser) => {
+          const fullName = `${apiUser.name.first} ${apiUser.name.last}`;
+          const username = `@${apiUser.login.username}${Math.floor(
+            Math.random() * 90
+          )}`;
+          const phone = apiUser.phone.replace(/[^0-9]/g, "");
+          const initials =
+            `${apiUser.name.first[0]}${apiUser.name.last[0]}`.toUpperCase();
+          const avatarType = Math.random() < 0.7 ? "image" : "initials";
+          return {
+            id: apiUser.login.uuid,
+            fullName,
+            handle: Math.random() < 0.5 ? username : phone,
+            picture: apiUser.picture.large,
+            initials,
+            avatarType,
+            avatarColor: getRandomItem(AVATAR_COLORS),
+          };
+        };
+        const createAvatarHTML = (user) => {
+          if (user.avatarType === "image") {
+            return `<div class="avatar"><img src="${user.picture}" alt="${user.fullName}"></div>`;
+          } else {
+            return `<div class="avatar" style="background-color: ${user.avatarColor};">${user.initials}</div>`;
+          }
+        };
+        const createDetailsHTML = (user) =>
+          `<div class="user-details"><div class="name">${user.fullName}</div><div class="handle">${user.handle}</div></div>`;
+        const renderUserList = (users) => {
+          userList.innerHTML = "";
+          if (users.length === 0) {
+            userList.innerHTML = '<p class="no-results">No results found.</p>';
+            return;
+          }
+          users.forEach((user) => {
+            const item = document.createElement("div");
+            item.className = "user-list-item";
+            item.innerHTML = `${createAvatarHTML(user)}${createDetailsHTML(
+              user
+            )}<div class="info-icon"><svg viewBox="0 0 24.0 24.0" xmlns="http://www.w3.org/2000/svg"><path fill="#545d68" d="M12 2.25A9.75 9.75 0 1 0 21.75 12A9.76 9.76 0 0 0 12 2.25zm0 18A8.25 8.25 0 1 1 20.25 12A8.26 8.26 0 0 1 12 20.25zm1.5-3.75a0.75 0.75 0 0 1-0.75 0.75a1.5 1.5 0 0 1-1.5-1.5V12a0.75 0.75 0 1 1 0-1.5a1.5 1.5 0 0 1 1.5 1.5v3.75a0.75 0.75 0 0 1 0.75 0.75zm-3-8.63a1.13 1.13 0 1 1 2.25 0a1.13 1.13 0 0 1-2.25 0z"/></svg></div>`;
+            item.addEventListener("click", () => showConfirmationModal(user));
+            userList.appendChild(item);
+          });
+        };
+        const renderSkeletonLoader = () => {
+          userList.innerHTML = "";
+          const list = document.createElement("div");
+          list.className = "skeleton-list";
+          for (let i = 0; i < 10; i++) {
+            list.innerHTML += `<div class="user-list-item"><div class="avatar shimmer"></div><div class="user-details"><div class="name shimmer"></div><div class="handle shimmer"></div></div></div>`;
+          }
+          userList.appendChild(list);
+        };
+        const handleSearch = (query) => {
+          clearTimeout(searchTimeout);
+          if (!query) {
+            listTitle.textContent = "Your contacts";
+            renderUserList(initialContacts);
+            return;
+          }
+          listTitle.textContent = "People on PayPal";
+          renderSkeletonLoader();
+          searchTimeout = setTimeout(() => {
+            const filteredUsers = masterUserList.filter(
+              (user) =>
+                user.fullName.toLowerCase().includes(query) ||
+                user.handle.toLowerCase().includes(query)
+            );
+            renderUserList(filteredUsers);
+          }, 2000);
+        };
+        const showConfirmationModal = (user) => {
+          modalAvatar.innerHTML = createAvatarHTML(user);
+          modalUserDetails.innerHTML = createDetailsHTML(user);
+          modalBackdrop.classList.add("visible");
+          modalSheet.classList.add("visible");
+        };
+        const hideConfirmationModal = () => {
+          modalBackdrop.classList.remove("visible");
+          modalSheet.classList.remove("visible");
+        };
+        const initializeApp = async () => {
+          try {
+            const response = await fetch(
+              "https://randomuser.me/api/?results=200&nat=us,gb,fr,ca,au"
+            );
+            const data = await response.json();
+            masterUserList = data.results.map(generateUserData);
+            initialContacts = masterUserList.slice(0, 15);
+            renderUserList(initialContacts);
+          } catch (error) {
+            userList.innerHTML =
+              '<p class="no-results">Could not load contacts.</p>';
+            console.error("Failed to fetch users:", error);
+          }
+        };
+        searchInput.addEventListener("input", (e) => {
+          const query = e.target.value.toLowerCase().trim();
+          clearIcon.classList.toggle("visible", query.length > 0);
+          handleSearch(query);
+        });
+        clearIcon.addEventListener("click", () => {
+          searchInput.value = "";
+          clearIcon.classList.remove("visible");
+          handleSearch("");
+          searchInput.focus();
+        });
+        modalCloseBtn.addEventListener("click", hideConfirmationModal);
+        modalBackdrop.addEventListener("click", hideConfirmationModal);
+        initializeApp();
+      });
+    </script>
+  </body>
+</html>

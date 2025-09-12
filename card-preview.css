@@ -1,0 +1,579 @@
+/* --- FONT DEFINITIONS (assuming they are in a /fonts folder) --- */
+@font-face {
+  font-family: "PayPal-Open-Regular";
+  src: url("fonts/pay_pal_open_regular.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "PayPal-Sans-Black";
+  src: url("fonts/pay_pal_pro_black.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: "PayPal-Sans-Web";
+  src: url("fonts/PayPalProSWeb-Book.woff2") format("opentype");
+  font-style: normal;
+}
+
+/* --- GLOBAL STYLES --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "PayPal-Open-Regular", -apple-system, sans-serif;
+  background-color: #f0f2f5;
+  color: #000000;
+}
+
+#mobile-container {
+  max-width: 448px;
+  margin: 0 auto;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+}
+
+/* --- CARD PREVIEW PAGE STYLES --- */
+.preview-header {
+  position: sticky;
+  top: 0;
+  background-color: #f0f2f5;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* This centers the title */
+  padding: 12px 16px;
+  height: 56px;
+}
+
+.header-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  position: absolute; /* Positioned relative to .preview-header */
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.header-back-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.header-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.preview-main {
+  padding: 16px;
+}
+
+.card-preview-wrapper {
+  margin-bottom: 24px;
+}
+
+/* --- YOUR CUSTOM CARD CSS --- */
+.card-container {
+  font-family: "PayPal-Open-Regular";
+  position: relative;
+  max-width: 400px;
+  width: 100%;
+  aspect-ratio: 1.586 / 1;
+  background-color: #002991;
+  border: 1px solid #f5f4ee;
+  border-radius: 12px;
+  overflow: hidden;
+  color: #ffffff;
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1),
+    inset 0 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+.card-container:hover {
+  transform: translateY(-10px) rotateX(5deg) rotateY(2deg);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15),
+    inset 0 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+.card-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  transform: skewX(-30deg);
+  z-index: 2;
+  transition: left 0.6s ease;
+}
+
+.card-container:hover::before {
+  left: 140%;
+}
+
+.paypal-logo {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 95%;
+  z-index: 1;
+  transform: translatex(-50%);
+}
+
+.paypal-logo svg {
+  display: block;
+}
+
+.card-element {
+  position: absolute;
+  z-index: 3;
+}
+
+.card-number {
+  font-family: "PayPal-Open-Regular";
+  bottom: 7%;
+  left: 5%;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.card-dots {
+  display: flex;
+  gap: 3px;
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  opacity: 0.9;
+}
+
+.last-four {
+  letter-spacing: 1px;
+}
+
+.card-info-right {
+  bottom: 5%;
+  right: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.debit-label {
+  font-family: "PayPal-Open-Regular";
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+  opacity: 0.9;
+}
+
+.mastercard-logo {
+  width: 70px;
+  height: auto;
+}
+
+/* --- DETAILS & ACTIONS LISTS --- */
+.details-list,
+.actions-list {
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.detail-item,
+.action-item {
+  padding: 5px;
+}
+
+.details-list .detail-item:first-child,
+.actions-list .action-item:first-child {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.details-list .detail-item:last-child,
+.actions-list .action-item:last-child {
+  border-bottom: none;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.detail-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #6c7378;
+  margin-bottom: 4px;
+}
+
+.detail-value {
+  font-size: 1rem;
+  color: #000000;
+  line-height: 1.4;
+}
+#edit-card-btn {
+  margin-bottom: 10px;
+}
+
+.detail-link {
+  font-family: "PayPal-Sans-Web";
+  display: block;
+  margin-top: 8px;
+  color: #0070ba;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+}
+
+.action-icon {
+  flex-shrink: 0;
+}
+
+.action-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.action-text {
+  font-family: "PayPal-Sans-Web";
+  color: #0070ba;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* --- MODAL STYLES --- */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 998;
+}
+
+.modal-backdrop.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: 448px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  z-index: 999;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal.visible {
+  transform: translateY(0);
+}
+
+/* --- "LINK A CARD" MODAL --- */
+#modal-link-card {
+  border-radius: 24px 24px 0 0;
+  max-height: 90vh;
+}
+
+#modal-link-card .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 16px;
+  margin-bottom: 8px;
+}
+
+#modal-link-card .modal-title {
+  font-family: "PayPal-Open-Regular", -apple-system, sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+#modal-link-card .modal-close-btn,
+#modal-link-card .modal-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  z-index: 1;
+}
+
+.modal-content {
+  padding: 0 24px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.form-action-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.scan-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #0070ba;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.scan-button svg {
+  width: 24px;
+  height: 24px;
+}
+
+.scan-button svg path {
+  fill: #0070ba;
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #c4c4c4;
+  border-radius: 12px;
+  font-family: "PayPal-Open-Regular", sans-serif;
+  font-size: 1rem;
+  outline: none;
+}
+
+.input-field:focus {
+  border-color: #0070ba;
+}
+
+.input-field.input-error {
+  border-color: #d70000;
+}
+
+.input-with-icon-left {
+  padding-left: 50px;
+}
+
+.input-icon-left {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.input-icon-left svg {
+  width: 24px;
+  height: 24px;
+  transform: translateY(-50%);
+  top: -50%;
+}
+
+.input-action-right {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.input-action-right svg {
+  width: 24px;
+  height: 24px;
+  transform: translateY(-50%);
+  top: -50%;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.error-message {
+  color: #d70000;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  padding-left: 4px;
+  height: 1.2em;
+}
+
+.billing-section {
+  margin-top: 32px;
+  padding-bottom: 16px;
+}
+
+.billing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.billing-title {
+  font-weight: 700;
+}
+
+.change-link {
+  color: #0070ba;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.address-block {
+  font-size: 1rem;
+  color: #545d68;
+  line-height: 1.5;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  margin-top: auto;
+  flex-shrink: 0;
+  border-top: 1px solid #f0f0f0;
+}
+
+.primary-btn {
+  width: 100%;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  padding: 16px;
+  font-family: "PayPal-Open-Regular", sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+/* --- CONFIRMATION MODAL --- */
+#modal-confirm-remove {
+  border-radius: 24px 24px 0 0;
+  padding: 24px;
+}
+
+.confirm-modal-content {
+  text-align: center;
+}
+
+.confirm-title {
+  font-family: "PayPal-Sans-Black", sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+}
+
+.confirm-subtitle {
+  font-size: 1rem;
+  color: #545d68;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.confirm-btn {
+  flex: 1;
+  border: none;
+  padding: 16px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.confirm-btn.primary {
+  background-color: #d70000;
+  color: #ffffff;
+}
+
+.confirm-btn.secondary {
+  background-color: #e0e0e0;
+  color: #000000;
+}
+
+/* --- TOAST NOTIFICATION STYLES --- */
+.toast {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  transform: translateY(-150%);
+  background-color: #2c2e2f;
+  color: #ffffff;
+  padding: 14px 16px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  z-index: 1000;
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  max-width: calc(448px - 32px);
+  margin: 0 auto;
+}
+
+.toast.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast svg {
+  width: 20px;
+  height: 20px;
+}
+
+.toast svg path {
+  fill: #ffffff;
+}

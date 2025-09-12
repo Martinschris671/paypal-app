@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Extracted PayPal Links and API Guide</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 20px;
+      }
+      h1,
+      h2,
+      h3 {
+        color: #003087;
+      }
+      a {
+        color: #0070ba;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .container {
+        max-width: 900px;
+        margin: auto;
+      }
+      .category {
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+      }
+      ul {
+        list-style-type: none;
+        padding-left: 0;
+      }
+      li {
+        margin-bottom: 10px;
+      }
+      code {
+        background-color: #f4f4f4;
+        padding: 2px 5px;
+        border-radius: 3px;
+      }
+      .url {
+        color: #555;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Extracted Links from PayPal.Me Page</h1>
+      <p>
+        This document organizes all the links found in the HTML of the PayPal.Me
+        page for "Bobby Mahendra" (@bob) and provides a guide to finding and
+        using PayPal's developer APIs.
+      </p>
+
+      <!-- API and Developer Information -->
+      <div class="category">
+        <h2>Developer & API Information</h2>
+        <p>
+          While the provided HTML is for a user-facing page, the most important
+          link for developers is the one to the PayPal Developer portal. This is
+          where you can find API documentation, get credentials, and test your
+          integrations.
+        </p>
+        <ul>
+          <li>
+            <a href="https://developer.paypal.com/" target="_blank"
+              >PayPal Developer Portal</a
+            ><br />
+            <span class="url">https://developer.paypal.com/</span>
+          </li>
+        </ul>
+
+        <h3>Getting Started with PayPal APIs</h3>
+        <p>
+          To use PayPal's APIs, you need to get credentials (a Client ID and a
+          Secret). These act like a username and password for your application.
+          [7] Here's the general process:
+        </p>
+        <ol>
+          <li>
+            <strong>Create a Business Account:</strong> You'll need a PayPal
+            Business account to go live with an integration. [7]
+          </li>
+          <li>
+            <strong>Log in to the Developer Dashboard:</strong> Go to the
+            <a href="https://developer.paypal.com/" target="_blank"
+              >PayPal Developer</a
+            >
+            website and log in. [2]
+          </li>
+          <li>
+            <strong>Create an App:</strong> In the dashboard, navigate to the
+            "Apps & Credentials" section. Here you can create a new application
+            to generate your REST API credentials. [7]
+          </li>
+          <li>
+            <strong>Get Your Credentials:</strong> Once the app is created,
+            PayPal will provide you with a <strong>Client ID</strong> and a
+            <strong>Client Secret</strong>. [7] Keep your secret key secure.
+          </li>
+          <li>
+            <strong>Use the Sandbox:</strong> The PayPal sandbox is a testing
+            environment that mirrors real-world transactions, allowing you to
+            test your integration without using real money. [7]
+          </li>
+        </ol>
+
+        <h3>Key API Documentation Links</h3>
+        <ul>
+          <li>
+            <a
+              href="https://developer.paypal.com/docs/api/rest/"
+              target="_blank"
+              >REST API Reference</a
+            ><br />
+            <span class="url">https://developer.paypal.com/docs/api/rest/</span>
+            <p>
+              This is the primary resource for modern integrations. PayPal's
+              REST APIs use standard JSON and OAuth 2.0 for authentication. [7]
+            </p>
+          </li>
+          <li>
+            <a
+              href="https://developer.paypal.com/docs/api/overview/"
+              target="_blank"
+              >API Overview</a
+            ><br />
+            <span class="url"
+              >https://developer.paypal.com/docs/api/overview/</span
+            >
+            <p>
+              A great starting point to understand the structure and
+              capabilities of the various APIs PayPal offers. [9]
+            </p>
+          </li>
+          <li>
+            <a
+              href="https://developer.paypal.com/docs/checkout/standard/integrate/"
+              target="_blank"
+              >Standard Checkout Integration Guide</a
+            ><br />
+            <span class="url"
+              >https://developer.paypal.com/docs/checkout/standard/integrate/</span
+            >
+            <p>
+              Documentation on how to integrate the standard PayPal checkout
+              experience. [12]
+            </p>
+          </li>
+          <li>
+            <a
+              href="https://developer.paypal.com/docs/api/nvp-soap-api/endpoints/"
+              target="_blank"
+              >NVP/SOAP API Endpoints</a
+            ><br />
+            <span class="url"
+              >https://developer.paypal.com/docs/api/nvp-soap-api/endpoints/</span
+            >
+            <p>
+              Reference for older, legacy NVP/SOAP APIs. While still supported,
+              new integrations are encouraged to use the REST APIs. [6, 8]
+            </p>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Extracted Links from HTML -->
+      <div class="category">
+        <h2>User Account & Actions</h2>
+        <ul>
+          <li>
+            <a href="https://www.paypal.com/signin" target="_blank">Log In</a
+            ><br /><span class="url">https://www.paypal.com/signin</span>
+          </li>
+          <li>
+            <a
+              href="https://www.paypal.com/ng/webapps/mpp/account-selection"
+              target="_blank"
+              >Sign Up</a
+            ><br /><span class="url"
+              >https://www.paypal.com/ng/webapps/mpp/account-selection</span
+            >
+          </li>
+        </ul>
+      </div>
+
+      <div class="category">
+        <h2>Main Navigation (Personal)</h2>
+        <ul>
+          <li>
+            <a
+              href="https://www.paypal.com/ng/webapps/mpp/personal"
+              target="_blank"
+              >How PayPal Works</a
+            ><br /><span class="url">/ng/webapps/mpp/personal</span>
+          </li>
+          <li>
+            <a
+              href="https://www.paypal.com/ng/webapps/mpp/pay-online"
+              target="_blank"
+              >Pay Online</a
+            ><br /><span class="url">/ng/webapps/mpp/pay-online</span>
+          </li>
+          <li>
+            <a
+              href="https://www.paypal.com/ng/webapps/mpp/send-money-online"
+              target="_blank"
+              >Send Payments</a
+            ><br /><span class="url">/ng/webapps/mpp/send-money-online</span>
+          </li>
+          <li>
+            <a
+              href="https://www.paypal.com/ng/webapps/mpp/offers"
+              target="_blank"
+              >Search for Deals</a
+            ><br /><span class="url">/ng/webapps/mpp/offers</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="category">
+        <h2>Profile Page Specific</h2>
+        <ul>
+          <li>
+            <a
+              href="https://www.paypal.com/ng/smarthelp/contact-us?email=paypalme"
+              target="_blank"
+              >Report this link</a
+            ><br /><span class="url"
+              >/ng/smarthelp/contact-us?email=paypalme</span
+            >
+          </li>
+        </ul>
+      </div>
+
+      <div class="category">
+        <h2>Footer Links: Help, Legal & Corporate</h2>
+        <h3>Help & Support</h3>
+        <ul>
+          <li>
+            <a href="https://www.paypal.com/ng/cshelp/personal" target="_blank"
+              >Help</a
+            ><br /><span class="url">/ng/cshelp/personal</span>
+          </li>
+          <li>
+            <a
+              href="https://www.paypal.com/ng/smarthelp/contact-us"
+              target="_blank"
+              >Contact</a
+            ><br /><span class="url">/ng/smarthelp/contact-us</span>
+          </li>
+          <li>
+            <a
+              href="https://www.paypal.com/ng/webapps/mpp/paypal-safety-and-security"
+              target="_blank"
+              >Security</a
+            ><br /><span class="url"
+              >/ng/webapps/mpp/paypal-safety-and-security</span
+            >
+          </li>
+        </ul>
+
+        <h3>General Information</h3>
+        <ul>
+          <li>
+            <a
+              href="https://www.paypal.com/ng/digital-wallet/paypal-consumer-fees"
+              target="_blank"
+              >Fees</a
+            ><br /><span class="url"
+              >/ng/digital-wallet/paypal-consumer-fees</span
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.paypal.com/ng/webapps/mpp/about-paypal-products"
+              target="_blank"
+              >Features</a
+            ><br /><span class="url"
+              >/ng/webapps/mpp/about-paypal-products</span
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.paypal.com/ng/webapps/mpp/pay-online"
+              target="_blank"
+              >Shop</a
+            ><br /><span class="url">/ng/webapps/mpp/pay-online</span>
+          </li>
+          <li>
+            <a
+              href="https://www.paypal.com/ng/webapps/mpp/country-worldwide"
+              target="_blank"
+              >See all countries/regions</a
+            ><br /><span class="url">/ng/webapps/mpp/country-worldwide</span>
+          </li>
+        </ul>
+
+        <h3>Corporate & Legal</h3>
+        <ul>
+          <li>
+            <a
+              href="https://www.paypal.com/ng/webapps/mpp/about"
+              target="_blank"
+              >About</a
+            ><br /><span class="url">/ng/webapps/mpp/about</span>
+          </li>
+          <li>
+            <a href="http://newsroom.paypal-corp.com/" target="_blank"
+              >Newsroom</a
+            ><br /><span class="url">http://newsroom.paypal-corp.com/</span>
+          </li>
+          <li>
+            <a href="https://careers.pypl.com/home/" target="_blank">Jobs</a
+            ><br /><span class="url">https://careers.pypl.com/home/</span>
+          </li>
+          <li>
+            <a
+              href="https://www.paypal.com/ng/webapps/mpp/accessibility"
+              target="_blank"
+              >Accessibility</a
+            ><br /><span class="url">/ng/webapps/mpp/accessibility</span>
+          </li>
+          <li>
+            <a
+              href="https://www.paypal.com/myaccount/privacy/cookiePrefs"
+              target="_blank"
+              >Cookies</a
+            ><br /><span class="url">/myaccount/privacy/cookiePrefs</span>
+          </li>
+          <li>
+            <a href="https://www.paypal.com/privacy-center" target="_blank"
+              >Privacy</a
+            ><br /><span class="url">/privacy-center</span>
+          </li>
+          <li>
+            <a
+              href="https://www.paypal.com/ng/webapps/mpp/ua/legalhub-full"
+              target="_blank"
+              >Legal</a
+            ><br /><span class="url">/ng/webapps/mpp/ua/legalhub-full</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="category">
+        <h2>Page Assets (CSS, JS, Fonts)</h2>
+        <p>
+          These are the technical resource links required to build and style the
+          page. They are generally not for direct user interaction.
+        </p>
+        <ul>
+          <li>
+            <a
+              href="https://www.paypalobjects.com/paypal-ui/web/fonts-and-normalize/1-1-0/fonts-and-normalize.min.css"
+              target="_blank"
+              >Fonts and Normalize CSS</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.paypalobjects.com/paypal-ui/web/icon-font/0-0-1/icon-font.min.css"
+              target="_blank"
+              >Icon Font CSS</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.paypalobjects.com/web/res/6a3/8b4bebc0bf0addaa88bee13569813/js/client/main.css"
+              target="_blank"
+              >Main Page CSS</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.paypalobjects.com/martech/tm/paypal/mktconf.js"
+              target="_blank"
+              >Marketing Config JS</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.paypalobjects.com/globalnav/js/main-DAguvxPi.js"
+              target="_blank"
+              >Global Navigation JS</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.paypalobjects.com/web/res/6a3/8b4bebc0bf0addaa88bee13569813/js/client/main.bundle.js"
+              target="_blank"
+              >Main Bundle JS</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>
